@@ -10,7 +10,7 @@ export const ExampleScreen: React.FC = () => {
         <VStack gap={8} align="center">
           <Text style={{ fontSize: 24, fontWeight: '700' }}>LOGO</Text>
           <Text style={{ fontSize: 14, color: '#666', textAlign: 'center' }}>
-            간단하고 편리한 운동을 위한{'\n'}당신의 헬스 메이트
+            간단하고 편리한 운동을 위한{'\n'}당신의 헬스 메이트s
           </Text>
         </VStack>
 
