@@ -1,4 +1,4 @@
-import BasicButton from "@/components/BasicButton/BasicButton";
+import BaseButton from "@/components/BasicButton/BaseButton";
 import { RootStackParamList } from "@/navigation/types";
 import { useTheme } from "@/theme/ThemeProvider/ThemeProvider";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -23,7 +23,7 @@ const DetailScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Detail'
         <Text>상세 화면</Text>
         <Text>{message}</Text>
 
-        <BasicButton onPress={onGoBack}>뒤로가귀</BasicButton>
+        <BaseButton onPress={onGoBack}>뒤로가귀</BaseButton>
       </View>
     </SafeAreaView>
   );

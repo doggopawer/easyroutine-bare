@@ -1,4 +1,4 @@
-import BasicButton from "@/components/BasicButton/BasicButton";
+import BaseButton from "@/components/BasicButton/BaseButton";
 import { AppStackParamList } from "@/navigation/types";
 import { useTheme } from "@/theme/ThemeProvider/ThemeProvider";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -22,7 +22,7 @@ const HomeScreen: React.FC<NativeStackScreenProps<AppStackParamList, 'Home'>> = 
         <Text >상세 화면s</Text>
         {/* <Text >{}</Text> */}
 
-        <BasicButton onPress={onGoBack} disabled={true}>뒤로가귀</BasicButton>
+        <BaseButton onPress={onGoBack} disabled={true}>뒤로가귀</BaseButton>
       </View>
     </SafeAreaView>
   );

@@ -10,7 +10,7 @@ type Props = {
 const ButtonWrapper = styled.Pressable<{ disabled?: boolean }>`
   width: 100%;
   height: 40px;
-  border-radius: 20px;
+  border-radius: 4px;
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.primary};
@@ -23,17 +23,16 @@ const ButtonLabel = styled.Text`
   font-weight: 600;
 `;
 
-const BasicButton: React.FC<Props> = ({ onPress, disabled, children }) => {
+const BaseButton: React.FC<Props> = ({ onPress, disabled, children }) => {
   return (
     <ButtonWrapper
       accessibilityRole="button"
       onPress={onPress}
       disabled={disabled}
-      style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
     >
       {typeof children === 'string' ? <ButtonLabel>{children}</ButtonLabel> : children}
     </ButtonWrapper>
   );
 };
 
-export default BasicButton;
+export default BaseButton;

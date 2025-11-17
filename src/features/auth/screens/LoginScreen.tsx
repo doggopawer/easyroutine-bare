@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
-import BasicButton from '../../../components/BasicButton/BasicButton';
 import { VStack } from '@/shared/layout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LogoSvg from '@/assets/images/main-logo.svg';
+import BaseButton from '../../../components/BasicButton/BaseButton';
 
 
 // ✅ App.tsx의 RootStackParamList 타입을 다시 정의
@@ -33,10 +33,10 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
           </VStack>
           <VStack gap={12} padding={{ x: 16 }} flex={1} justify='end'>
             {/* ✅ 클릭 시 Detail로 이동 */}
-            <BasicButton onPress={onGoDetail}>Google로 시작하기</BasicButton>
-            <BasicButton onPress={onGoDetail}>Apple로 시작하기</BasicButton>
-            <BasicButton onPress={onGoDetail}>카카오로 시작하기</BasicButton>
-            <BasicButton onPress={onGoDetail}>네이버로 시작하기</BasicButton>
+            <BaseButton onPress={onGoDetail}>Google로 시작하기</BaseButton>
+            <BaseButton onPress={onGoDetail}>Apple로 시작하기</BaseButton>
+            <BaseButton onPress={onGoDetail}>카카오로 시작하기</BaseButton>
+            <BaseButton onPress={onGoDetail}>네이버로 시작하기</BaseButton>
           </VStack>
         </VStack>
     </SafeAreaView>
