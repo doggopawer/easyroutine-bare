@@ -11,9 +11,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     <PageLayout title="Login" showHeader={false}>
       <View style={styles.container}>
         <Text style={styles.text}>Login Screen</Text>
-        <Button title="Login (Mock)" onPress={() => {
-          console.log('Login pressed');
-        }} />
+        <Button
+          title="Login (Mock)"
+          onPress={() => {
+            console.log('Login pressed');
+          }}
+        />
       </View>
     </PageLayout>
   );

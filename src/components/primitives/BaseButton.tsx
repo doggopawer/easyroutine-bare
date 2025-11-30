@@ -25,11 +25,7 @@ const ButtonLabel = styled.Text`
 
 const BaseButton: React.FC<Props> = ({ onPress, disabled, children }) => {
   return (
-    <ButtonWrapper
-      accessibilityRole="button"
-      onPress={onPress}
-      disabled={disabled}
-    >
+    <ButtonWrapper accessibilityRole="button" onPress={onPress} disabled={disabled}>
       {typeof children === 'string' ? <ButtonLabel>{children}</ButtonLabel> : children}
     </ButtonWrapper>
   );

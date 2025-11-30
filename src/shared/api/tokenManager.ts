@@ -14,13 +14,13 @@ export const tokenManager = {
   setTokens: (access: string | null, refresh: string | null) => {
     accessToken = access;
     refreshToken = refresh;
-    listeners.forEach((l) => l({ accessToken, refreshToken }));
+    listeners.forEach(l => l({ accessToken, refreshToken }));
   },
 
   clear: () => {
     accessToken = null;
     refreshToken = null;
-    listeners.forEach((l) => l({ accessToken: null, refreshToken: null }));
+    listeners.forEach(l => l({ accessToken: null, refreshToken: null }));
   },
 
   subscribe: (l: Listener) => {

@@ -13,7 +13,7 @@ defaultConfig.transformer = {
 // svg를 asset이 아닌 source로 취급하도록 resolver 조정
 defaultConfig.resolver = {
   ...defaultConfig.resolver,
-  assetExts: defaultConfig.resolver.assetExts.filter((ext) => ext !== 'svg'),
+  assetExts: defaultConfig.resolver.assetExts.filter(ext => ext !== 'svg'),
   sourceExts: [...defaultConfig.resolver.sourceExts, 'svg'],
 };
 

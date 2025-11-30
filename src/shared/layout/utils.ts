@@ -18,7 +18,7 @@ export const mapJustify = (v?: Justify): NonNullable<ViewStyle['justifyContent']
 };
 
 export const paddingToStyle = (
-  p?: PaddingSize,
+  p?: PaddingSize
 ): Pick<ViewStyle, 'paddingTop' | 'paddingBottom' | 'paddingLeft' | 'paddingRight'> => {
   if (p == null) return {};
   if (typeof p === 'number') {
@@ -43,7 +43,7 @@ export const numOrStr = (v?: number | string): string | undefined => {
 export const applyGapFallback = (
   children: React.ReactNode,
   gap: number | undefined,
-  dir: 'row' | 'column',
+  dir: 'row' | 'column'
 ) => {
   if (!gap || gap <= 0) return children;
   const isRow = dir === 'row';
@@ -52,14 +52,13 @@ export const applyGapFallback = (
   return validChildren.map((child, idx) => {
     if (!React.isValidElement(child)) return child;
 
-    const extraStyle: ViewStyle =
-      idx === 0 ? {} : isRow ? { marginLeft: gap } : { marginTop: gap };
+    const extraStyle: ViewStyle = idx === 0 ? {} : isRow ? { marginLeft: gap } : { marginTop: gap };
 
     const prevStyle = (child as React.ReactElement<any>).props?.style;
 
     const mergedStyle = Array.isArray(prevStyle)
       ? [...(prevStyle as ViewStyle[]), extraStyle]
-      : [((prevStyle as ViewStyle) ?? {}), extraStyle];
+      : [(prevStyle as ViewStyle) ?? {}, extraStyle];
 
     return React.cloneElement(child as React.ReactElement<any>, { style: mergedStyle });
   });

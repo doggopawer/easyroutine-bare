@@ -10,8 +10,8 @@ import { mapAlign, mapJustify, numOrStr, paddingToStyle } from './utils';
 
 type ZStackProps = {
   children: React.ReactNode;
-  align?: Align;      // 가로 정렬 기준(alignItems)
-  justify?: Justify;  // 세로 정렬 기준(justifyContent)
+  align?: Align; // 가로 정렬 기준(alignItems)
+  justify?: Justify; // 세로 정렬 기준(justifyContent)
   padding?: PaddingSize;
   width?: number | string;
   height?: number | string;
@@ -47,7 +47,10 @@ const Root = styled.View<{
 // 자식이 absolute가 아니어도 자동으로 덮일 수 있도록, 내부 래퍼로 채움
 const Fill = styled.View`
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 `;
 
 export const ZStack: React.FC<ZStackProps> = ({

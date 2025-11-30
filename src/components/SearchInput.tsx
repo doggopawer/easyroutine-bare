@@ -39,20 +39,19 @@ const SearchInput: React.FC<Props> = ({
 }) => {
   return (
     <InputWrapper>
-    <HStack gap={8} align='center'>
+      <HStack gap={8} align="center">
         <Feather name="home" size={14} color="#000" />
         <StyledInput
-            value={value}
-            onChangeText={onChangeText}
-            placeholder={placeholder}
-            secureTextEntry={secureTextEntry}
-            editable={!disabled}
-            // disabled prop은 TextInput에 없음
-            placeholderTextColor="#999"
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          secureTextEntry={secureTextEntry}
+          editable={!disabled}
+          // disabled prop은 TextInput에 없음
+          placeholderTextColor="#999"
         />
         <Feather name="home" size={14} color="#000" onPress={onPressXMark} />
-    </HStack>
-     
+      </HStack>
     </InputWrapper>
   );
 };

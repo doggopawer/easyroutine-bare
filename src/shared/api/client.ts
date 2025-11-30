@@ -28,9 +28,11 @@ let refreshQueue: Array<() => void> = [];
 
 // --- 응답 인터셉터: 401 → refreshToken 재발급 후 재시도 ---
 api.interceptors.response.use(
-  (res) => res,
+  res => res,
   async (error: AxiosError) => {
-    const original = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+    const original = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
     if (!original || original._retry) return Promise.reject(error);
 
     if (error.response?.status === 401) {
@@ -43,7 +45,7 @@ api.interceptors.response.use(
       }
 
       if (isRefreshing) {
-        await new Promise<void>((resolve) => refreshQueue.push(resolve));
+        await new Promise<void>(resolve => refreshQueue.push(resolve));
       } else {
         isRefreshing = true;
         try {
@@ -55,7 +57,7 @@ api.interceptors.response.use(
           return Promise.reject(error);
         } finally {
           isRefreshing = false;
-          refreshQueue.forEach((ok) => ok());
+          refreshQueue.forEach(ok => ok());
           refreshQueue = [];
         }
       }

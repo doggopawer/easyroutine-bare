@@ -12,14 +12,7 @@ export type PaddingSize =
       b?: number;
     };
 
-export type Align =
-  | 'stretch'
-  | 'center'
-  | 'start'
-  | 'end'
-  | 'flex-start'
-  | 'flex-end'
-  | 'baseline';
+export type Align = 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline';
 
 export type Justify =
   | 'start'
@@ -40,8 +33,8 @@ export type StackPropsBase = {
   justify?: Justify;
   wrap?: Wrap;
   padding?: PaddingSize;
-  width?: number | string;  // e.g., 320 | '100%'
+  width?: number | string; // e.g., 320 | '100%'
   height?: number | string; // e.g., 200 | '100%'
-  flex?: number;            // flex 컨테이너로 쓰고 싶다면
+  flex?: number; // flex 컨테이너로 쓰고 싶다면
   style?: ViewStyle | ViewStyle[];
 };

@@ -13,7 +13,9 @@ type Props = {
   style?: ViewStyle | ViewStyle[];
 };
 
-const Line = styled.View<Required<Pick<Props, 'orientation' | 'size' | 'length'>> & { $color: string }>`
+const Line = styled.View<
+  Required<Pick<Props, 'orientation' | 'size' | 'length'>> & { $color: string }
+>`
   background-color: ${({ $color }) => $color};
   ${({ orientation, size, length }) =>
     orientation === 'vertical'

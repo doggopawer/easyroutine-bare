@@ -4,7 +4,7 @@ import { User } from '@/shared/types';
 
 // 공통 persist 함수 (AsyncStorage 자동 연동)
 const persist =
-  <T,>(key: string): AtomEffect<T> =>
+  <T>(key: string): AtomEffect<T> =>
   ({ setSelf, onSet }) => {
     (async () => {
       const saved = await AsyncStorage.getItem(key);

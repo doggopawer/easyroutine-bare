@@ -14,7 +14,7 @@ const InputWrapper = styled.View`
   width: 100%;
   border-radius: 4px;
   border-width: 1px;
-  border-color: #C7CCD1;
+  border-color: #c7ccd1;
   padding: 0 12px;
   height: 40px;
   justify-content: center;
