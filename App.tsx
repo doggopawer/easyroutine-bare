@@ -9,7 +9,7 @@ import { enableScreens } from 'react-native-screens';
 import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider/ThemeProvider';
-import { RootNavigator } from '@/navigation/RootNavigator';
+import AppNavigator from './src/navigation/AppNavigator';
 
 // screens 최적화(앱 시작 1회)
 enableScreens();
@@ -37,7 +37,7 @@ const ThemedRoot: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      <RootNavigator />
+      <AppNavigator />
     </>
   );
 };

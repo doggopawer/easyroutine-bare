@@ -1,4 +1,4 @@
-import BaseButton from "@/components/BasicButton/BaseButton";
+import BaseButton from "@/components/primitives/BaseButton";
 import { RootStackParamList } from "@/navigation/types";
 import { useTheme } from "@/theme/ThemeProvider/ThemeProvider";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
