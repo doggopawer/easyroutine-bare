@@ -7,6 +7,49 @@ declare module 'styled-components' {
   export interface DefaultTheme {
     name: 'light' | 'dark';
     colors: {
+      // Grayscale
+      white1: string;
+      black1: string;
+      gray1: string;
+      gray2: string;
+      gray3: string;
+      gray4: string;
+      gray5: string;
+      gray6: string;
+      gray7: string;
+
+      // Brand / Accent
+      blue1: string;
+      blue2: string;
+
+      // Status
+      red1: string;
+      red2: string;
+      green1: string;
+      green2: string;
+
+      // Primary (Brand Orange)
+      primary1: string;
+      primary2: string;
+      primary3: string;
+      primary4: string;
+      primary5: string;
+      primary6: string;
+
+      // Alpha Tokens
+      primaryAlpha16: string;
+      primaryAlpha24: string;
+
+      // Gradients
+      gradient1: string;
+      gradient2: string;
+
+      // Backdrop
+      backdropColor: string;
+      backdropBlur: number;
+      backdropWebkitBlur: number;
+
+      // Legacy support
       background: string;
       surface: string;
       text: string;
@@ -23,6 +66,49 @@ declare module 'styled-components/native' {
   export interface DefaultTheme {
     name: 'light' | 'dark';
     colors: {
+      // Grayscale
+      white1: string;
+      black1: string;
+      gray1: string;
+      gray2: string;
+      gray3: string;
+      gray4: string;
+      gray5: string;
+      gray6: string;
+      gray7: string;
+
+      // Brand / Accent
+      blue1: string;
+      blue2: string;
+
+      // Status
+      red1: string;
+      red2: string;
+      green1: string;
+      green2: string;
+
+      // Primary (Brand Orange)
+      primary1: string;
+      primary2: string;
+      primary3: string;
+      primary4: string;
+      primary5: string;
+      primary6: string;
+
+      // Alpha Tokens
+      primaryAlpha16: string;
+      primaryAlpha24: string;
+
+      // Gradients
+      gradient1: string;
+      gradient2: string;
+
+      // Backdrop
+      backdropColor: string;
+      backdropBlur: number;
+      backdropWebkitBlur: number;
+
+      // Legacy support
       background: string;
       surface: string;
       text: string;
