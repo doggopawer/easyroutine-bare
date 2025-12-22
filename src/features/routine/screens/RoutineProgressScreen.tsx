@@ -4,7 +4,7 @@ import PageLayout from '@/components/Layout/PageLayout';
 
 const RoutineProgressScreen: React.FC = () => {
   return (
-    <PageLayout title="Routine Progress" showBack={true}>
+    <PageLayout mode="stack" title="Routine Progress">
       <View style={styles.container}>
         <Text style={styles.text}>Routine Progress Screen</Text>
       </View>
@@ -13,8 +13,14 @@ const RoutineProgressScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+  },
 });
 
 export default RoutineProgressScreen;

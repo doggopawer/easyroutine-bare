@@ -6,8 +6,9 @@ import { historyTabRoutes } from '@/navigation/routeConfig';
 
 const StatisticsScreen: React.FC = () => {
   return (
-    <PageLayout title="Statistics" showHeader={false} activeTab="History">
-      <LineTab routes={historyTabRoutes} activeTab={'Statistics'} />
+    <PageLayout mode="tab" activeTab="History">
+      <LineTab routes={historyTabRoutes} activeTab="Statistics" />
+
       <View style={styles.container}>
         <Text style={styles.text}>Statistics Screen</Text>
       </View>
@@ -16,8 +17,14 @@ const StatisticsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+  },
 });
 
 export default StatisticsScreen;

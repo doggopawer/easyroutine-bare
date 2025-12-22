@@ -101,7 +101,9 @@ export const HistoryStackNavigator = () => (
 
 const HistoryTab = createMaterialTopTabNavigator<HistoryStackParamList>();
 export const HistoryTabNavigator = () => (
-  <HistoryTab.Navigator screenOptions={{ tabBarStyle: { display: 'none' } }}>
+  <HistoryTab.Navigator
+    screenOptions={{ tabBarStyle: { display: 'none' }, animationEnabled: false }}
+  >
     {historyTabRoutes.map(route => (
       <HistoryTab.Screen
         key={route.name}

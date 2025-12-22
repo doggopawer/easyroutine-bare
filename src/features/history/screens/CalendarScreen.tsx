@@ -11,8 +11,9 @@ const CalendarScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<HistoryStackParamList>>();
 
   return (
-    <PageLayout title="Calendar" showHeader={false} activeTab="History">
-      <LineTab routes={historyTabRoutes} activeTab={'Calendar'} />
+    <PageLayout mode="tab" activeTab="History">
+      <LineTab routes={historyTabRoutes} activeTab="Calendar" />
+
       <View style={styles.container}>
         <Text style={styles.text}>Calendar Screen</Text>
         <Button
@@ -25,8 +26,15 @@ const CalendarScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20, marginBottom: 20 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
 });
 
 export default CalendarScreen;

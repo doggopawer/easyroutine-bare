@@ -8,8 +8,9 @@ type Props = NativeStackScreenProps<HistoryStackParamList, 'HistoryDetail'>;
 
 const HistoryDetailScreen: React.FC<Props> = ({ route }) => {
   const { recordId } = route.params;
+
   return (
-    <PageLayout title="History Detail" showBack={true}>
+    <PageLayout mode="stack" title="History Detail">
       <View style={styles.container}>
         <Text style={styles.text}>History Detail: {recordId}</Text>
       </View>
@@ -18,8 +19,14 @@ const HistoryDetailScreen: React.FC<Props> = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+  },
 });
 
 export default HistoryDetailScreen;
