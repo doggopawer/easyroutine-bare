@@ -21,12 +21,12 @@ const CircleButtonWrapper = styled.Pressable<WrapperProps>`
 
   border-radius: ${({ $width, $height }) => Math.min($width, $height) / 2}px;
 
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.primary1};
 
   align-items: center;
   justify-content: center;
 
-  box-shadow: ${({ theme }) => '0px 4px 8px rgba(0,0,0,0.15)'};
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
 `;
 
 const CircleButton: React.FC<CircleButtonProps> = ({

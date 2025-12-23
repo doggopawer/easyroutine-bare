@@ -29,12 +29,12 @@ const lightTheme: DefaultTheme = {
     green2: '#e8fdde',
 
     // Primary
-    primary1: '#e88731',
-    primary2: '#fff5eb',
-    primary3: '#ffe8d2',
-    primary4: '#ffd8b2',
-    primary5: '#ffc489',
-    primary6: '#fffcf6',
+    primary1: '#82B1FF', // 메인 블루 (버튼, 활성 아이콘)
+    primary2: '#A8CCFF', // 연한 블루 (hover, secondary)
+    primary3: '#C9E0FF', // selection / highlight background
+    primary4: '#E3F0FF', // 카드 배경, subtle 영역
+    primary5: '#F1F7FF', // 페이지 배경 accent
+    primary6: '#FAFCFF', // 거의 화이트에 가까운 블루 톤
 
     // Alpha Tokens
     primaryAlpha16: 'rgba(255, 154, 62, 0.16)',
@@ -85,12 +85,12 @@ const darkTheme: DefaultTheme = {
     green2: '#14532d',
 
     // Primary (Dark variants)
-    primary1: '#ff9a3e',
-    primary2: '#2a1f18',
-    primary3: '#3a2618',
-    primary4: '#4a2f1c',
-    primary5: '#5b3a22',
-    primary6: '#6b4522',
+    primary1: '#82B1FF', // 메인 블루 (버튼, 활성 아이콘)
+    primary2: '#A8CCFF', // 연한 블루 (hover, secondary)
+    primary3: '#C9E0FF', // selection / highlight background
+    primary4: '#E3F0FF', // 카드 배경, subtle 영역
+    primary5: '#F1F7FF', // 페이지 배경 accent
+    primary6: '#FAFCFF', // 거의 화이트에 가까운 블루 톤
 
     // Alpha Tokens
     primaryAlpha16: 'rgba(255, 154, 62, 0.16)',

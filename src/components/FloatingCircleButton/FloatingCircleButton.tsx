@@ -16,13 +16,22 @@ const HIDE_DISTANCE = 160; // 아래로 얼마나 내려가서 숨길지 (80 + �
 const DURATION_MS = 280;
 const THRESHOLD = 8; // 이 정도 이상 움직여야 방향 전환 (깜빡임 방지)
 
-const Wrapper = styled(Animated.View)`
+type WrapperProps = {
+  $bottom: number;
+};
+
+const Wrapper = styled(Animated.View)<WrapperProps>`
   position: absolute;
   left: 0;
   right: 0;
-  bottom: ${BASE_BOTTOM}px;
+  bottom: ${({ $bottom }) => $bottom}px;
   align-items: center;
-  z-index: 20;
+
+  /* iOS 레이어 */
+  z-index: 9999;
+
+  /* Android 레이어 */
+  elevation: 9999;
 `;
 
 const FloatingCircleButton: React.FC<FloatingCircleButtonProps> = ({
@@ -49,7 +58,11 @@ const FloatingCircleButton: React.FC<FloatingCircleButtonProps> = ({
   useEffect(() => {
     if (scrollY === undefined) return;
 
-    const diff = scrollY - lastScrollY.current;
+    const prev = lastScrollY.current;
+    const diff = scrollY - prev;
+
+    // ✅ threshold 이하여도 "기준값"은 갱신해야 자연스럽게 동작함
+    lastScrollY.current = scrollY;
 
     // 작은 흔들림은 무시
     if (Math.abs(diff) < THRESHOLD) return;
@@ -57,12 +70,10 @@ const FloatingCircleButton: React.FC<FloatingCircleButtonProps> = ({
     // 내려가면 숨기고, 올라가면 보이기
     if (diff > 0) animateTo(false);
     else animateTo(true);
-
-    lastScrollY.current = scrollY;
   }, [scrollY]);
 
   return (
-    <Wrapper pointerEvents="box-none" style={{ transform: [{ translateY }] }}>
+    <Wrapper pointerEvents="box-none" $bottom={BASE_BOTTOM} style={{ transform: [{ translateY }] }}>
       <CircleButton width={width} height={height} onCircleButtonClick={onButtonClick}>
         <Ionicons name="add" size={32} color="#fff" />
       </CircleButton>

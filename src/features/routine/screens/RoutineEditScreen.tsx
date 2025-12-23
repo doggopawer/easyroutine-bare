@@ -4,7 +4,7 @@ import PageLayout from '@/components/Layout/PageLayout';
 
 const RoutineEditScreen: React.FC = () => {
   return (
-    <PageLayout mode="stack" title="Edit Routine">
+    <PageLayout mode="stack" title="루틴 수정">
       <View style={styles.container}>
         <Text style={styles.text}>Routine Edit Screen</Text>
       </View>

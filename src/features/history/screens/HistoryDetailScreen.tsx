@@ -10,7 +10,7 @@ const HistoryDetailScreen: React.FC<Props> = ({ route }) => {
   const { recordId } = route.params;
 
   return (
-    <PageLayout mode="stack" title="History Detail">
+    <PageLayout mode="stack" title="기록 상세">
       <View style={styles.container}>
         <Text style={styles.text}>History Detail: {recordId}</Text>
       </View>

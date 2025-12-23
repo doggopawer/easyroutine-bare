@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineList'>;
 
 const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
   return (
-    <PageLayout mode="tab" activeTab="Routine">
+    <PageLayout mode="tab" activeTab="Home">
       <View style={styles.container}>
         <Text style={styles.text}>Routine List (Home)</Text>
 
