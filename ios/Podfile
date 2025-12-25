@@ -8,6 +8,9 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
+# Explicitly disable New Architecture
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -19,6 +22,8 @@ target 'easyroutine' do
 
   use_react_native!(
     :path => config[:reactNativePath],
+    :fabric_enabled => false,
+    :hermes_enabled => true,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -32,5 +37,87 @@ target 'easyroutine' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    installer.pods_project.targets.each do |target|
+      puts "Modifying target: #{target.name}"
+      target.build_configurations.each do |config|
+        # Remove from GCC_PREPROCESSOR_DEFINITIONS
+        if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+          if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].is_a?(Array)
+            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED=1')
+            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED')
+          else
+            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].gsub!(/RCT_NEW_ARCH_ENABLED(=1)?/, '')
+          end
+        end
+        
+        # Remove from OTHER_CPLUSPLUSFLAGS
+        if config.build_settings['OTHER_CPLUSPLUSFLAGS']
+          if config.build_settings['OTHER_CPLUSPLUSFLAGS'].is_a?(Array)
+            config.build_settings['OTHER_CPLUSPLUSFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED=1')
+            config.build_settings['OTHER_CPLUSPLUSFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED')
+          else
+            config.build_settings['OTHER_CPLUSPLUSFLAGS'].gsub!(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
+          end
+        end
+
+        # Remove from OTHER_CFLAGS
+        if config.build_settings['OTHER_CFLAGS']
+          if config.build_settings['OTHER_CFLAGS'].is_a?(Array)
+            config.build_settings['OTHER_CFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED=1')
+            config.build_settings['OTHER_CFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED')
+          else
+            config.build_settings['OTHER_CFLAGS'].gsub!(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
+          end
+        end
+      end
+    end
+
+    installer.aggregate_targets.each do |target|
+      target.user_project.targets.each do |user_target|
+        user_target.build_configurations.each do |config|
+          if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+            if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].is_a?(Array)
+              config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED=1')
+            else
+              config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].gsub!(/RCT_NEW_ARCH_ENABLED(=1)?/, '')
+            end
+          end
+        end
+      end
+    end
+
+    # Forcefully remove RCT_NEW_ARCH_ENABLED from all xcconfig files, project file, and podspecs
+    puts "Current directory: #{Dir.pwd}"
+    pods_dir = File.expand_path('Pods', Dir.pwd)
+    puts "Cleaning up all New Architecture flags in #{pods_dir}..."
+    
+    Dir.glob(File.join(pods_dir, "**/*")).each do |file_path|
+      next if File.directory?(file_path)
+      next unless file_path.match(/\.(xcconfig|json|pbxproj)$/)
+      
+      content = File.read(file_path)
+      if content.include?('RCT_NEW_ARCH_ENABLED') || content.include?('RCT_FABRIC_ENABLED')
+        puts "Cleaning #{file_path}"
+        new_content = content.gsub(/[-D]*RCT_NEW_ARCH_ENABLED(=1)?/, '')
+                             .gsub(/[-D]*RCT_FABRIC_ENABLED(=1)?/, '')
+        File.write(file_path, new_content)
+      end
+    end
+
+    # Remove from file-level COMPILER_FLAGS
+    installer.pods_project.targets.each do |target|
+      next unless target.respond_to?(:source_build_phase)
+      
+      target.source_build_phase.files.each do |file|
+        if file.settings && file.settings['COMPILER_FLAGS']
+          flags = file.settings['COMPILER_FLAGS']
+          if flags.include?('RCT_NEW_ARCH_ENABLED')
+            puts "Removing RCT_NEW_ARCH_ENABLED from #{file.file_ref.path}"
+            file.settings['COMPILER_FLAGS'] = flags.gsub(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
+          end
+        end
+      end
+    end
   end
 end

@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
-    <PageLayout title="Login" showHeader={false}>
+    <PageLayout mode="stack" title="Login" showHeader={false}>
       <View style={styles.container}>
         <Text style={styles.text}>Login Screen</Text>
         <Button

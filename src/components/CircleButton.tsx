@@ -29,6 +29,12 @@ const CircleButtonWrapper = styled.Pressable<WrapperProps>`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
 `;
 
+const Label = styled.Text`
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
 const CircleButton: React.FC<CircleButtonProps> = ({
   children,
   width,
@@ -42,7 +48,7 @@ const CircleButton: React.FC<CircleButtonProps> = ({
       $width={width}
       $height={height}
     >
-      {children}
+      {typeof children === 'string' ? <Label>{children}</Label> : children}
     </CircleButtonWrapper>
   );
 };

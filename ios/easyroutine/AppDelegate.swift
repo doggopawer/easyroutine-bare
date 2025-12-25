@@ -45,4 +45,20 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
+
+  override func newArchEnabled() -> Bool {
+    return false
+  }
+
+  override func bridgelessEnabled() -> Bool {
+    return false
+  }
+
+  override func fabricEnabled() -> Bool {
+    return false
+  }
+
+  override func turboModuleEnabled() -> Bool {
+    return false
+  }
 }
