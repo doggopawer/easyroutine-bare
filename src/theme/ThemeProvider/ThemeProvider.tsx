@@ -1,10 +1,63 @@
-// src/theme/ThemeProvider.tsx
 import React, { createContext, useContext, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
-import { ThemeProvider as StyledProvider } from 'styled-components/native';
-import type { DefaultTheme } from 'styled-components';
 
-const lightTheme: DefaultTheme = {
+export type Theme = {
+  name: 'light' | 'dark';
+  colors: {
+    // Grayscale
+    white1: string;
+    black1: string;
+    gray1: string;
+    gray2: string;
+    gray3: string;
+    gray4: string;
+    gray5: string;
+    gray6: string;
+    gray7: string;
+
+    // Brand / Accent
+    blue1: string;
+    blue2: string;
+
+    // Status
+    red1: string;
+    red2: string;
+    green1: string;
+    green2: string;
+
+    // Primary
+    primary1: string;
+    primary2: string;
+    primary3: string;
+    primary4: string;
+    primary5: string;
+    primary6: string;
+
+    // Alpha Tokens
+    primaryAlpha16: string;
+    primaryAlpha24: string;
+
+    // Gradients
+    gradient1: string;
+    gradient2: string;
+
+    // Backdrop
+    backdropColor: string;
+    backdropBlur: number;
+    backdropWebkitBlur: number;
+
+    // Legacy Mappings
+    background: string;
+    surface: string;
+    text: string;
+    textMuted: string;
+    primary: string;
+    primaryText: string;
+    border: string;
+  };
+};
+
+const lightTheme: Theme = {
   name: 'light',
   colors: {
     // Grayscale
@@ -60,7 +113,7 @@ const lightTheme: DefaultTheme = {
   },
 };
 
-const darkTheme: DefaultTheme = {
+const darkTheme: Theme = {
   name: 'dark',
   colors: {
     // Grayscale (Inverted)
@@ -117,7 +170,7 @@ const darkTheme: DefaultTheme = {
 };
 
 type ThemeContextValue = {
-  theme: DefaultTheme;
+  theme: Theme;
   isDark: boolean;
 };
 
@@ -125,14 +178,10 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isDark = useColorScheme() === 'dark';
-  const theme = useMemo<DefaultTheme>(() => (isDark ? darkTheme : lightTheme), [isDark]);
+  const theme = useMemo<Theme>(() => (isDark ? darkTheme : lightTheme), [isDark]);
   const value = useMemo<ThemeContextValue>(() => ({ theme, isDark }), [theme, isDark]);
 
-  return (
-    <ThemeContext.Provider value={value}>
-      <StyledProvider theme={theme}>{children}</StyledProvider>
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = (): ThemeContextValue => {

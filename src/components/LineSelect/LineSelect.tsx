@@ -1,7 +1,7 @@
 // LineSelect.tsx
 import React from 'react';
-import styled from 'styled-components/native';
-import Select from '@/components/headless/Select/Select';
+import { View, StyleSheet } from 'react-native';
+import Select from '@/headless/Select/SelectItem';
 import LineSelectItem from './LineSelectItem';
 
 type LineSelectProps = {
@@ -11,12 +11,6 @@ type LineSelectProps = {
   onChange?: (value: string) => void;
 };
 
-const Wrapper = styled.View`
-  flex-direction: column;
-  gap: 10px;
-  height: 100%;
-`;
-
 type LineSelectComponent = React.FC<LineSelectProps> & {
   Item: typeof LineSelectItem;
 };
@@ -24,7 +18,7 @@ type LineSelectComponent = React.FC<LineSelectProps> & {
 const LineSelectRoot: React.FC<LineSelectProps> = ({ children, defaultValue, value, onChange }) => {
   return (
     <Select defaultValue={defaultValue} value={value} onChange={onChange}>
-      <Wrapper>{children}</Wrapper>
+      <View style={styles.wrapper}>{children}</View>
     </Select>
   );
 };
@@ -33,3 +27,11 @@ const LineSelect = LineSelectRoot as LineSelectComponent;
 LineSelect.Item = LineSelectItem;
 
 export default LineSelect;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'column',
+    gap: 10,
+    height: '100%',
+  },
+});

@@ -2,8 +2,8 @@
 // 기능: 가로/세로 구분선. theme.colors.border 사용(없으면 기본값)
 
 import React from 'react';
-import styled from 'styled-components/native';
-import type { ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type Props = {
   orientation?: 'horizontal' | 'vertical';
@@ -13,16 +13,6 @@ type Props = {
   style?: ViewStyle | ViewStyle[];
 };
 
-const Line = styled.View<
-  Required<Pick<Props, 'orientation' | 'size' | 'length'>> & { $color: string }
->`
-  background-color: ${({ $color }) => $color};
-  ${({ orientation, size, length }) =>
-    orientation === 'vertical'
-      ? `width: ${size}px; height: ${typeof length === 'number' ? `${length}px` : length};`
-      : `height: ${size}px; width: ${typeof length === 'number' ? `${length}px` : length};`}
-`;
-
 export const Divider: React.FC<Props> = ({
   orientation = 'horizontal',
   size = 1,
@@ -30,13 +20,20 @@ export const Divider: React.FC<Props> = ({
   color,
   style,
 }) => {
-  return (
-    <Line
-      orientation={orientation}
-      size={size}
-      length={length}
-      $color={color ?? '#E5E5E5'}
-      style={style}
-    />
-  );
+  const { theme } = useTheme();
+  const finalColor = color ?? theme.colors.border;
+
+  const baseStyle: ViewStyle = {
+    backgroundColor: finalColor,
+  };
+
+  if (orientation === 'vertical') {
+    baseStyle.width = size;
+    baseStyle.height = typeof length === 'number' ? length : (length as any);
+  } else {
+    baseStyle.height = size;
+    baseStyle.width = typeof length === 'number' ? length : (length as any);
+  }
+
+  return <View style={[baseStyle, style]} />;
 };

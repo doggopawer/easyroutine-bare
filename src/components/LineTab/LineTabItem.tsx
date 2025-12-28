@@ -1,7 +1,9 @@
 // LineTabItem.tsx
-import React from 'react';
-import styled from 'styled-components/native';
-import Select, { useSelect } from '@/components/headless/Select/Select';
+import React, { useMemo, memo, useCallback } from 'react';
+import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import Select from '@/headless/Select/Select';
+import { useSelectStore, useSelectStoreContext } from '@/headless/Select/SelectContext';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type LineTabItemProps = {
   value: string;
@@ -11,48 +13,72 @@ type LineTabItemProps = {
   accessibilityLabel?: string;
 };
 
-const PressArea = styled.View<{ $active: boolean; $disabled: boolean }>`
-  width: 100%;
-  padding: 15px 0px;
-
-  align-items: center;
-  justify-content: center;
-
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ $active, theme }) => ($active ? theme.colors.primary1 : 'transparent')};
-
-  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
-`;
-
-const Label = styled.Text<{ $active: boolean }>`
-  font-size: 14px;
-  font-weight: ${({ $active }) => ($active ? '700' : '400')};
-  color: ${({ $active, theme }) => ($active ? theme.colors.primary1 : theme.colors.text)};
-`;
-
-const LineTabItem: React.FC<LineTabItemProps> = ({
+const LineTabItemBase: React.FC<LineTabItemProps> = ({
   value,
   children,
   onTabItemPress,
   disabled,
   accessibilityLabel,
 }) => {
-  const { isActive } = useSelect();
-  const active = isActive(value);
+  const store = useSelectStoreContext();
+  const active = useSelectStore(store, s => s.isSelected(value));
+  const { theme } = useTheme();
+
+  const pressAreaStyle: ViewStyle = useMemo(
+    () => ({
+      borderBottomColor: active ? theme.colors.primary1 : 'transparent',
+      opacity: disabled ? 0.5 : 1,
+    }),
+    [active, theme.colors.primary1, disabled]
+  );
+
+  const handlePress = useCallback(
+    (v: string) => {
+      onTabItemPress?.(v);
+    },
+    [onTabItemPress]
+  );
 
   return (
     <Select.Item
       value={value}
       disabled={disabled}
       accessibilityLabel={accessibilityLabel}
-      onPress={v => onTabItemPress?.(v)}
+      onPress={handlePress}
       style={{ flex: 1 }}
     >
-      <PressArea $active={active} $disabled={!!disabled}>
-        {typeof children === 'string' ? <Label $active={active}>{children}</Label> : children}
-      </PressArea>
+      <View style={[styles.pressArea, pressAreaStyle]}>
+        {typeof children === 'string' ? (
+          <Text
+            style={[
+              styles.label,
+              {
+                fontWeight: active ? '700' : '400',
+                color: active ? theme.colors.primary1 : theme.colors.text,
+              },
+            ]}
+          >
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </View>
     </Select.Item>
   );
 };
 
-export default LineTabItem;
+export default memo(LineTabItemBase);
+
+const styles = StyleSheet.create({
+  pressArea: {
+    width: '100%',
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+  },
+  label: {
+    fontSize: 14,
+  },
+});

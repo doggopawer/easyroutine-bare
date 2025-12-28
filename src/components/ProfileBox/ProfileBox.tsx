@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/native';
+import { View, Image, Text, StyleSheet } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type ProfileBoxProps = {
   imageSrc?: string;
@@ -8,26 +9,8 @@ type ProfileBoxProps = {
 
 const FALLBACK_IMAGE = 'https://placehold.co/200x200/png';
 
-const Container = styled.View`
-  width: 100%;
-  padding: 16px;
-  align-items: center;
-`;
-
-const ProfileImage = styled.Image`
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
-  margin-bottom: 20px;
-  background-color: #ddd;
-`;
-
-const NameText = styled.Text`
-  font-size: 16px;
-  color: #111;
-`;
-
 const ProfileBox: React.FC<ProfileBoxProps> = ({ imageSrc, name }) => {
+  const { theme } = useTheme();
   const [uri, setUri] = useState<string>(imageSrc ?? FALLBACK_IMAGE);
 
   useEffect(() => {
@@ -35,8 +18,9 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({ imageSrc, name }) => {
   }, [imageSrc]);
 
   return (
-    <Container>
-      <ProfileImage
+    <View style={styles.container}>
+      <Image
+        style={styles.profileImage}
         source={{ uri }}
         resizeMode="cover"
         onError={e => {
@@ -44,9 +28,27 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({ imageSrc, name }) => {
           setUri(FALLBACK_IMAGE);
         }}
       />
-      <NameText>{name}</NameText>
-    </Container>
+      <Text style={[styles.nameText, { color: theme.colors.text }]}>{name}</Text>
+    </View>
   );
 };
 
 export default ProfileBox;
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    padding: 16,
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+    backgroundColor: '#ddd',
+  },
+  nameText: {
+    fontSize: 16,
+  },
+});

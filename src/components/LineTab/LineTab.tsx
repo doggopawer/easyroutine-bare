@@ -1,7 +1,7 @@
 // LineTab.tsx
 import React from 'react';
-import styled from 'styled-components/native';
-import Select from '@/components/headless/Select/Select';
+import { View, StyleSheet } from 'react-native';
+import Select from '@/headless/Select/Select';
 import LineTabItem from './LineTabItem';
 
 type LineTabProps = {
@@ -11,11 +11,6 @@ type LineTabProps = {
   onChange?: (value: string) => void;
 };
 
-const Wrapper = styled.View`
-  flex-direction: row;
-  width: 100%;
-`;
-
 type LineTabComponent = React.FC<LineTabProps> & {
   Item: typeof LineTabItem;
 };
@@ -23,7 +18,7 @@ type LineTabComponent = React.FC<LineTabProps> & {
 const LineTabRoot: React.FC<LineTabProps> = ({ defaultValue, value, onChange, children }) => {
   return (
     <Select defaultValue={defaultValue} value={value} onChange={onChange}>
-      <Wrapper>{children}</Wrapper>
+      <View style={styles.wrapper}>{children}</View>
     </Select>
   );
 };
@@ -32,3 +27,10 @@ const LineTab = LineTabRoot as LineTabComponent;
 LineTab.Item = LineTabItem;
 
 export default LineTab;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+});

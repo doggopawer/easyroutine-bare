@@ -3,8 +3,7 @@
 // align/justify는 컨테이너 내부에서 중앙/시작/끝 정렬 컨트롤.
 
 import React from 'react';
-import styled from 'styled-components/native';
-import type { ViewStyle } from 'react-native';
+import { View, ViewStyle, StyleSheet } from 'react-native';
 import type { Align, Justify, PaddingSize } from './types';
 import { mapAlign, mapJustify, numOrStr, paddingToStyle } from './utils';
 
@@ -19,40 +18,6 @@ type ZStackProps = {
   style?: ViewStyle | ViewStyle[];
 };
 
-const Root = styled.View<{
-  $align?: Align;
-  $justify?: Justify;
-  $padding?: PaddingSize;
-  $width?: number | string;
-  $height?: number | string;
-  $flex?: number;
-}>`
-  position: relative;
-  align-items: ${({ $align }) => mapAlign($align)};
-  justify-content: ${({ $justify }) => mapJustify($justify)};
-  ${({ $width }) => ($width != null ? `width: ${numOrStr($width)};` : '')}
-  ${({ $height }) => ($height != null ? `height: ${numOrStr($height)};` : '')}
-  ${({ $flex }) => ($flex != null ? `flex: ${$flex};` : '')}
-  ${({ $padding }) => {
-    const p = paddingToStyle($padding);
-    return `
-      padding-top: ${p.paddingTop ?? 0}px;
-      padding-right: ${p.paddingRight ?? 0}px;
-      padding-bottom: ${p.paddingBottom ?? 0}px;
-      padding-left: ${p.paddingLeft ?? 0}px;
-    `;
-  }}
-`;
-
-// 자식이 absolute가 아니어도 자동으로 덮일 수 있도록, 내부 래퍼로 채움
-const Fill = styled.View`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-`;
-
 export const ZStack: React.FC<ZStackProps> = ({
   children,
   align = 'center',
@@ -64,19 +29,31 @@ export const ZStack: React.FC<ZStackProps> = ({
   style,
 }) => {
   const nodes = React.Children.toArray(children);
+  const p = paddingToStyle(padding);
+
   return (
-    <Root
-      $align={align}
-      $justify={justify}
-      $padding={padding}
-      $width={width}
-      $height={height}
-      $flex={flex}
-      style={style}
+    <View
+      style={[
+        {
+          position: 'relative',
+          alignItems: mapAlign(align),
+          justifyContent: mapJustify(justify),
+          width: width != null ? (numOrStr(width) as any) : undefined,
+          height: height != null ? (numOrStr(height) as any) : undefined,
+          flex: flex,
+          paddingTop: p.paddingTop,
+          paddingRight: p.paddingRight,
+          paddingBottom: p.paddingBottom,
+          paddingLeft: p.paddingLeft,
+        },
+        style,
+      ]}
     >
       {nodes.map((node, i) => (
-        <Fill key={i}>{node as React.ReactNode}</Fill>
+        <View key={i} style={StyleSheet.absoluteFill}>
+          {node}
+        </View>
       ))}
-    </Root>
+    </View>
   );
 };

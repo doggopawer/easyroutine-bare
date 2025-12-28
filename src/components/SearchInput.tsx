@@ -1,7 +1,8 @@
 import React from 'react';
-import styled from 'styled-components/native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { HStack } from '@/shared/layout';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type Props = {
   value: string;
@@ -12,23 +13,6 @@ type Props = {
   disabled?: boolean;
 };
 
-// 재사용 가능한 인풋 박스 컨테이너
-const InputWrapper = styled.View`
-  width: 100%;
-  border-radius: 20px;
-  padding: 14px 18px;
-  height: 44px;
-  justify-content: center;
-  background-color: gray;
-`;
-
-// 실제 텍스트 입력 영역
-const StyledInput = styled.TextInput`
-  flex: 1;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 14px;
-`;
-
 const SearchInput: React.FC<Props> = ({
   value,
   onChangeText,
@@ -37,23 +21,42 @@ const SearchInput: React.FC<Props> = ({
   secureTextEntry,
   disabled,
 }) => {
+  const { theme } = useTheme();
+
   return (
-    <InputWrapper>
+    <View style={styles.wrapper}>
       <HStack gap={8} align="center">
-        <Feather name="home" size={14} color="#000" />
-        <StyledInput
+        <Feather name="search" size={14} color="#000" />
+        <TextInput
+          style={[styles.input, { color: theme.colors.text }]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
           secureTextEntry={secureTextEntry}
           editable={!disabled}
-          // disabled prop은 TextInput에 없음
           placeholderTextColor="#999"
         />
-        <Feather name="home" size={14} color="#000" onPress={onPressXMark} />
+        {value.length > 0 && <Feather name="x" size={14} color="#000" onPress={onPressXMark} />}
       </HStack>
-    </InputWrapper>
+    </View>
   );
 };
 
 export default SearchInput;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '100%',
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    height: 44,
+    justifyContent: 'center',
+    backgroundColor: '#f2f2f2', // Gray background
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    padding: 0, // Reset padding for TextInput inside HStack
+  },
+});

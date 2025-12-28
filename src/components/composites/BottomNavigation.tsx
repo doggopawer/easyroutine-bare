@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styled, { useTheme as useStyledTheme } from 'styled-components/native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type MainTabName = 'Home' | 'History' | 'Library' | 'MyPage';
 
@@ -10,109 +10,83 @@ interface BottomNavigationProps {
   activeTab?: MainTabName;
 }
 
-type ActiveProps = {
-  $active?: boolean;
-};
-
-const Wrapper = styled.View`
-  /* 탭바 위에 살짝 떠 보이게 (radius가 티나게) */
-  background-color: transparent;
-
-  /* ✅ shadow는 Wrapper에 주는 게 정석 (Container는 overflow hidden 때문에 shadow가 잘림) */
-  shadow-color: #000;
-  shadow-offset: 0px -6px;
-  shadow-opacity: 0.08;
-  shadow-radius: 10px;
-  elevation: 12;
-`;
-
-const Container = styled.View`
-  flex-direction: row;
-  height: 90px;
-
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-
-  overflow: hidden;
-
-  border-top-width: 0.5px;
-  border-top-color: ${({ theme }) => theme.colors.border};
-
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-const TabButton = styled(TouchableOpacity)`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Label = styled(Text)<ActiveProps>`
-  margin-top: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  color: ${({ theme, $active }) => ($active ? theme.colors.primary1 : theme.colors.gray3)};
-`;
-
-/** ✅ Ionicons도 styled로 감싸서 theme 기반 색 적용 가능 */
-const TabIcon = styled(Ionicons)<ActiveProps>`
-  color: ${({ theme, $active }) => ($active ? theme.colors.primary1 : theme.colors.gray3)};
-`;
-
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab }) => {
   const navigation = useNavigation<any>();
-  const theme = useStyledTheme();
+  const { theme } = useTheme();
 
   const go = (name: MainTabName) => {
     if (activeTab === name) return;
     navigation.navigate(name);
   };
 
+  const renderTab = (name: MainTabName, label: string, iconName: string) => {
+    const isActive = activeTab === name;
+    const color = isActive ? theme.colors.primary1 : theme.colors.gray3;
+
+    return (
+      <TouchableOpacity
+        style={styles.tabButton}
+        accessibilityRole="button"
+        accessibilityState={isActive ? { selected: true } : {}}
+        onPress={() => go(name)}
+        activeOpacity={0.7}
+      >
+        <Ionicons name={iconName} size={22} color={color} />
+        <Text style={[styles.label, { color }]}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <Wrapper>
-      <Container>
-        <TabButton
-          accessibilityRole="button"
-          accessibilityState={activeTab === 'Home' ? { selected: true } : {}}
-          onPress={() => go('Home')}
-          activeOpacity={0.7}
-        >
-          <TabIcon $active={activeTab === 'Home'} name="home-outline" size={22} />
-          <Label $active={activeTab === 'Home'}>홈</Label>
-        </TabButton>
-
-        <TabButton
-          accessibilityRole="button"
-          accessibilityState={activeTab === 'History' ? { selected: true } : {}}
-          onPress={() => go('History')}
-          activeOpacity={0.7}
-        >
-          <TabIcon $active={activeTab === 'History'} name="calendar-outline" size={22} />
-          <Label $active={activeTab === 'History'}>기록</Label>
-        </TabButton>
-
-        <TabButton
-          accessibilityRole="button"
-          accessibilityState={activeTab === 'Library' ? { selected: true } : {}}
-          onPress={() => go('Library')}
-          activeOpacity={0.7}
-        >
-          <TabIcon $active={activeTab === 'Library'} name="bookmark-outline" size={22} />
-          <Label $active={activeTab === 'Library'}>라이브러리</Label>
-        </TabButton>
-
-        <TabButton
-          accessibilityRole="button"
-          accessibilityState={activeTab === 'MyPage' ? { selected: true } : {}}
-          onPress={() => go('MyPage')}
-          activeOpacity={0.7}
-        >
-          <TabIcon $active={activeTab === 'MyPage'} name="person-outline" size={22} />
-          <Label $active={activeTab === 'MyPage'}>마이</Label>
-        </TabButton>
-      </Container>
-    </Wrapper>
+    <View style={styles.wrapper}>
+      <View
+        style={[
+          styles.container,
+          {
+            borderTopColor: theme.colors.border,
+            backgroundColor: theme.colors.background,
+          },
+        ]}
+      >
+        {renderTab('Home', '홈', 'home-outline')}
+        {renderTab('History', '기록', 'calendar-outline')}
+        {renderTab('Library', '라이브러리', 'bookmark-outline')}
+        {renderTab('MyPage', '마이', 'person-outline')}
+      </View>
+    </View>
   );
 };
 
 export default BottomNavigation;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    /* 탭바 위에 살짝 떠 보이게 (radius가 티나게) */
+    backgroundColor: 'transparent',
+
+    /* ✅ shadow는 Wrapper에 주는 게 정석 (Container는 overflow hidden 때문에 shadow가 잘림) */
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 12,
+  },
+  container: {
+    flexDirection: 'row',
+    height: 90,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+    borderTopWidth: 0.5,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  label: {
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: '500',
+  },
+});

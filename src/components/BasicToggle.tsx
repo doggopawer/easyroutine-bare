@@ -1,7 +1,7 @@
 // BasicToggle.tsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing } from 'react-native';
-import styled from 'styled-components/native';
+import { Animated, Easing, Pressable, StyleSheet } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type BasicToggleProps = {
   onToggleClick: (value: boolean) => void;
@@ -18,30 +18,8 @@ const THUMB_LEFT_INSET = 4;
 // 여기서 100%는 "thumb의 너비만큼" 이동하는 의미라서 15px 이동으로 맞춥니다.
 const ACTIVE_TRANSLATE_X = THUMB_SIZE;
 
-const Track = styled.Pressable<{ $active: boolean }>`
-  width: ${TRACK_WIDTH}px;
-  height: ${TRACK_HEIGHT}px;
-  background-color: ${({ $active, theme }) =>
-    $active ? theme?.colors?.primary ?? '#3B82F6' : '#d5d5d5'};
-  border-width: 1px;
-  border-color: ${({ theme }) => '#cfcfcf'};
-  border-radius: 34px;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Thumb = styled(Animated.View)`
-  position: absolute;
-  width: ${THUMB_SIZE}px;
-  height: ${THUMB_SIZE}px;
-  top: 50%;
-  left: ${THUMB_LEFT_INSET}px;
-  background-color: #ffffff;
-  border-radius: ${THUMB_SIZE / 2}px;
-`;
-
 const BasicToggle: React.FC<BasicToggleProps> = ({ onToggleClick, defaultValue }) => {
+  const { theme } = useTheme();
   const [active, setActive] = useState<boolean>(defaultValue);
 
   // defaultValue가 바뀌면 외부값을 따라가도록 동기화
@@ -70,6 +48,7 @@ const BasicToggle: React.FC<BasicToggleProps> = ({ onToggleClick, defaultValue }
 
   const thumbStyle = useMemo(
     () => [
+      styles.thumb,
       {
         transform: [
           { translateX },
@@ -81,15 +60,42 @@ const BasicToggle: React.FC<BasicToggleProps> = ({ onToggleClick, defaultValue }
   );
 
   return (
-    <Track
+    <Pressable
       accessibilityRole="switch"
       accessibilityState={{ checked: active }}
-      $active={active}
       onPress={handlePress}
+      style={[
+        styles.track,
+        {
+          backgroundColor: active ? theme?.colors?.primary ?? '#3B82F6' : '#d5d5d5',
+          borderColor: '#cfcfcf',
+        },
+      ]}
     >
-      <Thumb style={thumbStyle} />
-    </Track>
+      <Animated.View style={thumbStyle} />
+    </Pressable>
   );
 };
 
 export default BasicToggle;
+
+const styles = StyleSheet.create({
+  track: {
+    width: TRACK_WIDTH,
+    height: TRACK_HEIGHT,
+    borderWidth: 1,
+    borderRadius: 34,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  thumb: {
+    position: 'absolute',
+    width: THUMB_SIZE,
+    height: THUMB_SIZE,
+    top: '50%',
+    left: THUMB_LEFT_INSET,
+    backgroundColor: '#ffffff',
+    borderRadius: THUMB_SIZE / 2,
+  },
+});

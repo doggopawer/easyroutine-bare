@@ -1,64 +1,32 @@
 import UIKit
 import React
 import React_RCTAppDelegate
-import ReactAppDependencyProvider
+// import ReactAppDependencyProvider
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-  var window: UIWindow?
-
-  var reactNativeDelegate: ReactNativeDelegate?
-  var reactNativeFactory: RCTReactNativeFactory?
-
-  func application(
+class AppDelegate: RCTAppDelegate {
+  override func application(
     _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
   ) -> Bool {
-    let delegate = ReactNativeDelegate()
-    let factory = RCTReactNativeFactory(delegate: delegate)
-    delegate.dependencyProvider = RCTAppDependencyProvider()
+    self.moduleName = "easyroutine"
+    // self.dependencyProvider = RCTAppDependencyProvider()
 
-    reactNativeDelegate = delegate
-    reactNativeFactory = factory
+    let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
-    window = UIWindow(frame: UIScreen.main.bounds)
+    self.window.backgroundColor = UIColor.red
 
-    factory.startReactNative(
-      withModuleName: "easyroutine",
-      in: window,
-      launchOptions: launchOptions
-    )
-
-    return true
+    return result
   }
-}
 
-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   override func sourceURL(for bridge: RCTBridge) -> URL? {
-    self.bundleURL()
-  }
-
-  override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    return RCTBundleURLProvider.sharedSettings().jsBundleURL(
+      forBundleRoot: "index",
+      fallbackExtension: nil
+    )
 #else
-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
-  }
-
-  override func newArchEnabled() -> Bool {
-    return false
-  }
-
-  override func bridgelessEnabled() -> Bool {
-    return false
-  }
-
-  override func fabricEnabled() -> Bool {
-    return false
-  }
-
-  override func turboModuleEnabled() -> Bool {
-    return false
   }
 }

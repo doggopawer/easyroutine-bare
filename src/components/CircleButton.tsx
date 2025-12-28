@@ -1,6 +1,7 @@
 // CircleButton.tsx
 import React from 'react';
-import styled from 'styled-components/native';
+import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type CircleButtonProps = {
   children: React.ReactNode;
@@ -9,48 +10,48 @@ type CircleButtonProps = {
   onCircleButtonClick?: () => void;
 };
 
-type WrapperProps = {
-  $width: number;
-  $height: number;
-};
-
-const CircleButtonWrapper = styled.Pressable<WrapperProps>`
-  width: ${({ $width }) => $width}px;
-  height: ${({ $height }) => $height}px;
-  min-width: ${({ $width }) => $width}px;
-
-  border-radius: ${({ $width, $height }) => Math.min($width, $height) / 2}px;
-
-  background-color: ${({ theme }) => theme.colors.primary1};
-
-  align-items: center;
-  justify-content: center;
-
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-`;
-
-const Label = styled.Text`
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-`;
-
 const CircleButton: React.FC<CircleButtonProps> = ({
   children,
   width,
   height,
   onCircleButtonClick,
 }) => {
+  const { theme } = useTheme();
+
+  const wrapperStyle: ViewStyle = {
+    width,
+    height,
+    minWidth: width,
+    borderRadius: Math.min(width, height) / 2,
+    backgroundColor: theme.colors.primary1,
+  };
+
   return (
-    <CircleButtonWrapper
+    <Pressable
       accessibilityRole="button"
       onPress={onCircleButtonClick}
-      $width={width}
-      $height={height}
+      style={[styles.wrapper, wrapperStyle]}
     >
-      {typeof children === 'string' ? <Label>{children}</Label> : children}
-    </CircleButtonWrapper>
+      {typeof children === 'string' ? <Text style={styles.label}>{children}</Text> : children}
+    </Pressable>
   );
 };
 
 export default CircleButton;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  label: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

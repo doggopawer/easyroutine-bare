@@ -1,5 +1,6 @@
 import React from 'react';
-import styled from 'styled-components/native';
+import { View, TextInput, StyleSheet } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type Props = {
   value: string;
@@ -9,24 +10,6 @@ type Props = {
   disabled?: boolean;
 };
 
-// 재사용 가능한 인풋 박스 컨테이너
-const InputWrapper = styled.View`
-  width: 100%;
-  border-radius: 4px;
-  border-width: 1px;
-  border-color: #c7ccd1;
-  padding: 0 12px;
-  height: 40px;
-  justify-content: center;
-`;
-
-// 실제 텍스트 입력 영역
-const StyledInput = styled.TextInput`
-  flex: 1;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 14px;
-`;
-
 const BaseInput: React.FC<Props> = ({
   value,
   onChangeText,
@@ -34,19 +17,37 @@ const BaseInput: React.FC<Props> = ({
   secureTextEntry,
   disabled,
 }) => {
+  const { theme } = useTheme();
+
   return (
-    <InputWrapper>
-      <StyledInput
+    <View style={styles.wrapper}>
+      <TextInput
+        style={[styles.input, { color: theme.colors.text }]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         editable={!disabled}
-        // disabled prop은 TextInput에 없음
         placeholderTextColor="#999"
       />
-    </InputWrapper>
+    </View>
   );
 };
 
 export default BaseInput;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '100%',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#c7ccd1',
+    paddingHorizontal: 12,
+    height: 40,
+    justifyContent: 'center',
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+  },
+});

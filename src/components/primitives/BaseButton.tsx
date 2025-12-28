@@ -1,5 +1,6 @@
 import React from 'react';
-import styled from 'styled-components/native';
+import { Pressable, Text, StyleSheet } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type Props = {
   onPress?: () => void;
@@ -7,28 +8,40 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ButtonWrapper = styled.Pressable<{ disabled?: boolean }>`
-  width: 100%;
-  height: 40px;
-  border-radius: 4px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-`;
-
-const ButtonLabel = styled.Text`
-  color: ${({ theme }) => theme.colors.primaryText};
-  font-size: 16px;
-  font-weight: 600;
-`;
-
 const BaseButton: React.FC<Props> = ({ onPress, disabled, children }) => {
+  const { theme } = useTheme();
+
   return (
-    <ButtonWrapper accessibilityRole="button" onPress={onPress} disabled={disabled}>
-      {typeof children === 'string' ? <ButtonLabel>{children}</ButtonLabel> : children}
-    </ButtonWrapper>
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      disabled={disabled}
+      style={[
+        styles.wrapper,
+        { backgroundColor: theme.colors.primary1, opacity: disabled ? 0.5 : 1 },
+      ]}
+    >
+      {typeof children === 'string' ? (
+        <Text style={[styles.label, { color: theme.colors.white1 }]}>{children}</Text>
+      ) : (
+        children
+      )}
+    </Pressable>
   );
 };
 
 export default BaseButton;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '100%',
+    height: 40,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

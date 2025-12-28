@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styled from 'styled-components/native';
 import BottomNavigation from '../composites/BottomNavigation';
 import CircleButton from '@/components/CircleButton';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 export type PageLayoutMode = 'tab' | 'stack' | 'auth';
 export type MainTabName = 'Home' | 'History' | 'Library' | 'MyPage';
@@ -45,111 +45,9 @@ const HEADER_HEIGHT = 56;
 const TAB_FOOTER_HEIGHT = 90;
 const STACK_HELPER_HEIGHT = 80;
 
-type RootProps = { $pt: number };
-
-const Root = styled.View<RootProps>`
-  flex: 1;
-  padding-top: ${({ $pt }) => $pt}px;
-  background-color: ${({ theme }) => theme.colors.gray7};
-`;
-
-const Header = styled.View`
-  height: ${HEADER_HEIGHT}px;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 8px;
-  background-color: ${({ theme }) => theme.colors.gray7};
-  z-index: 10;
-`;
-
-const HeaderSide = styled.View`
-  width: 44px;
-  align-items: center;
-  justify-content: center;
-`;
-
-const HeaderCenter = styled.View`
-  flex: 1;
-  align-items: center;
-`;
-
-const HeaderTitle = styled.Text`
-  font-size: 16px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const LogoText = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.primary1};
-  margin-left: 8px;
-`;
-
-const Content = styled(ScrollView)`
-  flex: 1;
-`;
-
-type StackHelperProps = { $pb: number };
-
-const StackHelper = styled.View<StackHelperProps>`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-
-  height: ${STACK_HELPER_HEIGHT}px;
-  padding: 10px 16px 0px 16px;
-
-  border-top-width: 0.5px;
-  border-top-color: ${({ theme }) => theme.colors.border};
-  background-color: ${({ theme }) => theme.colors.background};
-
-  padding-bottom: ${({ $pb }) => $pb}px;
-
-  z-index: 20;
-  elevation: 20;
-`;
-
-const TabFooter = styled.View`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-
-  z-index: 30;
-  elevation: 30;
-`;
-
-/**
- * ✅ 핵심: Overlay는 "항상 맨 위 레이어"
- * - JSX에서 "맨 마지막"에 렌더
- * - zIndex/elevation 최대로
- */
-const Overlay = styled.View`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-
-  z-index: 9999;
-  elevation: 9999;
-`;
-
-type BackCircleWrapperProps = {
-  $size: number;
-};
-
-const BackCircleWrapper = styled.View<BackCircleWrapperProps>`
-  width: ${({ $size }) => $size}px;
-  height: ${({ $size }) => $size}px;
-  align-items: center;
-  justify-content: center;
-`;
-
 const PageLayout: React.FC<PageLayoutProps> = props => {
   const { children, overlay, helper, showHeader = true } = props;
+  const { theme } = useTheme();
 
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
@@ -174,56 +72,143 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
   };
 
   return (
-    <Root $pt={insets.top}>
+    <View style={[styles.root, { paddingTop: insets.top, backgroundColor: theme.colors.gray7 }]}>
       {/* ================= HEADER ================= */}
       {props.mode !== 'auth' && showHeader && (
-        <Header>
+        <View style={[styles.header, { backgroundColor: theme.colors.gray7 }]}>
           {isStack ? (
             <>
               {/* ✅ back button: CircleButton으로 감싸기 */}
-              <HeaderSide>
-                <BackCircleWrapper $size={36}>
+              <View style={styles.headerSide}>
+                <View style={[styles.backCircleWrapper, { width: 36, height: 36 }]}>
                   <CircleButton width={36} height={36} onCircleButtonClick={onBack}>
                     <Ionicons name="chevron-back" size={20} color="#ffffff" />
                   </CircleButton>
-                </BackCircleWrapper>
-              </HeaderSide>
+                </View>
+              </View>
 
-              <HeaderCenter>
-                <HeaderTitle numberOfLines={1}>{title}</HeaderTitle>
-              </HeaderCenter>
+              <View style={styles.headerCenter}>
+                <Text style={[styles.headerTitle, { color: theme.colors.text }]} numberOfLines={1}>
+                  {title}
+                </Text>
+              </View>
 
-              <HeaderSide />
+              <View style={styles.headerSide} />
             </>
           ) : (
-            <LogoText>EASYROUTINE</LogoText>
+            <Text style={[styles.logoText, { color: theme.colors.primary1 }]}>EASYROUTINE</Text>
           )}
-        </Header>
+        </View>
       )}
 
       {/* ================= CONTENT ================= */}
-      <Content
+      <ScrollView
+        style={styles.content}
         contentContainerStyle={{ padding: 16, paddingBottom }}
         onScroll={e => setScrollY(e.nativeEvent.contentOffset.y)}
         scrollEventThrottle={16}
       >
         {children}
-      </Content>
+      </ScrollView>
 
       {/* ================= STACK HELPER ================= */}
-      {isStack && helper ? <StackHelper $pb={insets.bottom}>{helper}</StackHelper> : null}
+      {isStack && helper ? (
+        <View
+          style={[
+            styles.stackHelper,
+            {
+              paddingBottom: insets.bottom,
+              borderTopColor: theme.colors.border,
+              backgroundColor: theme.colors.background,
+            },
+          ]}
+        >
+          {helper}
+        </View>
+      ) : null}
 
       {/* ================= TAB FOOTER ================= */}
       {isTab && activeTab ? (
-        <TabFooter>
+        <View style={styles.tabFooter}>
           <BottomNavigation activeTab={activeTab} />
-        </TabFooter>
+        </View>
       ) : null}
 
       {/* ✅✅✅ ================= OVERLAY (맨 마지막!) ================= */}
-      {overlay ? <Overlay pointerEvents="box-none">{overlay({ scrollY })}</Overlay> : null}
-    </Root>
+      {overlay ? (
+        <View style={styles.overlay} pointerEvents="box-none">
+          {overlay({ scrollY })}
+        </View>
+      ) : null}
+    </View>
   );
 };
 
 export default PageLayout;
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  header: {
+    height: HEADER_HEIGHT,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    zIndex: 10,
+  },
+  headerSide: {
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+  content: {
+    flex: 1,
+  },
+  stackHelper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: STACK_HELPER_HEIGHT,
+    paddingTop: 10,
+    paddingHorizontal: 16,
+    borderTopWidth: 0.5,
+    zIndex: 20,
+    elevation: 20,
+  },
+  tabFooter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 30,
+    elevation: 30,
+  },
+  overlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 9999,
+    elevation: 9999,
+  },
+  backCircleWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

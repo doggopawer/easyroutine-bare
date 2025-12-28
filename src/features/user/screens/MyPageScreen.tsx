@@ -1,15 +1,17 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import PageLayout from '@/components/Layout/PageLayout';
+
+import ChipTab from '@/components/ChipTab/ChipTab';
+
+import FloatingCircleButton from '@/components/FloatingCircleButton/FloatingCircleButton';
+import { VStack } from '@/shared/layout';
 import BasicToggle from '@/components/BasicToggle';
 import CircleButton from '@/components/CircleButton';
 import ColorTab from '@/components/ColorTab/ColorTab';
-import ChipTab from '@/components/ChipTab/ChipTab';
 import LineTab from '@/components/LineTab/LineTab';
 import IconTab from '@/components/IconTab/IconTab';
 import ProfileBox from '@/components/ProfileBox/ProfileBox';
-import FloatingCircleButton from '@/components/FloatingCircleButton/FloatingCircleButton';
-import { VStack } from '@/shared/layout';
 
 const MyPageScreen: React.FC = () => {
   return (

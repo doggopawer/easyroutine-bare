@@ -1,7 +1,9 @@
 // ColorTabItem.tsx
-import React, { useMemo } from 'react';
-import styled from 'styled-components/native';
-import Select, { useSelect } from '../headless/Select/Select';
+import React, { useMemo, memo, useCallback } from 'react';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import Select from '@/headless/Select/Select';
+import { useSelectStore, useSelectStoreContext } from '@/headless/Select/SelectContext';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type ColorTabItemProps = {
   value: string;
@@ -10,25 +12,15 @@ type ColorTabItemProps = {
   accessibilityLabel?: string;
 };
 
-const Dot = styled.View<{ $bg: string; $active: boolean }>`
-  width: 25px;
-  height: 25px;
-  border-radius: 999px;
-
-  background-color: ${({ $bg }) => $bg};
-
-  border-width: ${({ $active }) => ($active ? 5 : 0)}px;
-  border-color: ${({ theme }) => theme.colors.primary};
-`;
-
-const ColorTabItem: React.FC<ColorTabItemProps> = ({
+const ColorTabItemBase: React.FC<ColorTabItemProps> = ({
   value,
   onTabItemPress,
   disabled,
   accessibilityLabel,
 }) => {
-  const { isActive } = useSelect();
-  const active = isActive(value);
+  const store = useSelectStoreContext();
+  const active = useSelectStore(store, s => s.isSelected(value));
+  const { theme } = useTheme();
 
   const bgColor = useMemo(() => {
     switch (value) {
@@ -47,16 +39,40 @@ const ColorTabItem: React.FC<ColorTabItemProps> = ({
     }
   }, [value]);
 
+  const dotStyle: ViewStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+      borderWidth: active ? 5 : 0,
+      borderColor: theme.colors.primary1,
+    }),
+    [bgColor, active, theme.colors.primary1]
+  );
+
+  const handlePress = useCallback(
+    (v: string) => {
+      onTabItemPress?.(v);
+    },
+    [onTabItemPress]
+  );
+
   return (
     <Select.Item
       value={value}
       disabled={disabled}
       accessibilityLabel={accessibilityLabel}
-      onPress={v => onTabItemPress?.(v)}
+      onPress={handlePress}
     >
-      <Dot $bg={bgColor} $active={active} />
+      <View style={[styles.dot, dotStyle]} />
     </Select.Item>
   );
 };
 
-export default ColorTabItem;
+export default memo(ColorTabItemBase);
+
+const styles = StyleSheet.create({
+  dot: {
+    width: 25,
+    height: 25,
+    borderRadius: 999,
+  },
+});

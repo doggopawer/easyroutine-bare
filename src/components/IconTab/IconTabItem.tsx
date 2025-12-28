@@ -1,7 +1,9 @@
 // IconTabItem.tsx
-import React from 'react';
-import styled from 'styled-components/native';
-import Select, { useSelect } from '@/components/headless/Select/Select';
+import React, { memo, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import Select from '@/headless/Select/Select';
+import { useSelectStore, useSelectStoreContext } from '@/headless/Select/SelectContext';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type IconTabItemProps = {
   value: string;
@@ -11,46 +13,70 @@ type IconTabItemProps = {
   accessibilityLabel?: string;
 };
 
-const Column = styled.View<{ $disabled: boolean }>`
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
-`;
-
-const Content = styled.Text<{ $active: boolean }>`
-  font-size: 14px;
-  font-weight: ${({ $active }) => ($active ? '700' : '400')};
-
-  /* ✅ 비활성은 gray3(더 진하게), 활성은 primary1 */
-  color: ${({ $active, theme }) => ($active ? theme.colors.primary1 : theme.colors.gray3)};
-`;
-
-const IconTabItem: React.FC<IconTabItemProps> = ({
+const IconTabItemBase: React.FC<IconTabItemProps> = ({
   value,
   children,
   onTabItemPress,
   disabled,
   accessibilityLabel,
 }) => {
-  const { isActive } = useSelect();
-  const active = isActive(value);
+  const store = useSelectStoreContext();
+  const active = useSelectStore(store, s => s.isSelected(value));
+  const { theme } = useTheme();
+
+  const columnStyle: ViewStyle = useMemo(
+    () => ({
+      opacity: disabled ? 0.5 : 1,
+    }),
+    [disabled]
+  );
+
+  const handlePress = useCallback(
+    (v: string) => {
+      onTabItemPress?.(v);
+    },
+    [onTabItemPress]
+  );
 
   return (
     <Select.Item
       value={value}
       disabled={disabled}
       accessibilityLabel={accessibilityLabel}
-      onPress={v => onTabItemPress?.(v)}
+      onPress={handlePress}
       style={{ flex: 1 }}
     >
-      <Column $disabled={!!disabled}>
-        {typeof children === 'string' ? <Content $active={active}>{children}</Content> : children}
-      </Column>
+      <View style={[styles.column, columnStyle]}>
+        {typeof children === 'string' ? (
+          <Text
+            style={[
+              styles.content,
+              {
+                fontWeight: active ? '700' : '400',
+                color: active ? theme.colors.primary1 : theme.colors.gray3,
+              },
+            ]}
+          >
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </View>
     </Select.Item>
   );
 };
 
-export default IconTabItem;
+export default memo(IconTabItemBase);
+
+const styles = StyleSheet.create({
+  column: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    fontSize: 14,
+  },
+});

@@ -1,8 +1,8 @@
 // ColorTab.tsx
 import React from 'react';
-import styled from 'styled-components/native';
+import { View, StyleSheet } from 'react-native';
 import ColorTabItem from './ColorTabItem';
-import Select from '../headless/Select/Select';
+import Select from '@/headless/Select/Select';
 
 type ColorTabProps = {
   defaultValue: string;
@@ -11,12 +11,6 @@ type ColorTabProps = {
   onChange?: (value: string) => void;
 };
 
-const Wrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  width: 50%;
-`;
-
 type ColorTabComponent = React.FC<ColorTabProps> & {
   Item: typeof ColorTabItem;
 };
@@ -24,7 +18,7 @@ type ColorTabComponent = React.FC<ColorTabProps> & {
 const ColorTabRoot: React.FC<ColorTabProps> = ({ defaultValue, value, onChange, children }) => {
   return (
     <Select defaultValue={defaultValue} value={value} onChange={onChange}>
-      <Wrapper>{children}</Wrapper>
+      <View style={styles.wrapper}>{children}</View>
     </Select>
   );
 };
@@ -33,3 +27,11 @@ const ColorTab = ColorTabRoot as ColorTabComponent;
 ColorTab.Item = ColorTabItem;
 
 export default ColorTab;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '50%',
+  },
+});

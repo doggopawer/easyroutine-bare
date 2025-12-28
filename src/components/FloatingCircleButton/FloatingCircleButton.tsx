@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated } from 'react-native';
-import styled from 'styled-components/native';
+import { Animated, StyleSheet } from 'react-native';
 import CircleButton from '@/components/CircleButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -15,24 +14,6 @@ const BASE_BOTTOM = 80; // 화면에서 떠있는 위치
 const HIDE_DISTANCE = 160; // 아래로 얼마나 내려가서 숨길지 (80 + 여유)
 const DURATION_MS = 280;
 const THRESHOLD = 8; // 이 정도 이상 움직여야 방향 전환 (깜빡임 방지)
-
-type WrapperProps = {
-  $bottom: number;
-};
-
-const Wrapper = styled(Animated.View)<WrapperProps>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: ${({ $bottom }) => $bottom}px;
-  align-items: center;
-
-  /* iOS 레이어 */
-  z-index: 9999;
-
-  /* Android 레이어 */
-  elevation: 9999;
-`;
 
 const FloatingCircleButton: React.FC<FloatingCircleButtonProps> = ({
   onButtonClick,
@@ -73,12 +54,26 @@ const FloatingCircleButton: React.FC<FloatingCircleButtonProps> = ({
   }, [scrollY]);
 
   return (
-    <Wrapper pointerEvents="box-none" $bottom={BASE_BOTTOM} style={{ transform: [{ translateY }] }}>
+    <Animated.View
+      pointerEvents="box-none"
+      style={[styles.wrapper, { bottom: BASE_BOTTOM, transform: [{ translateY }] }]}
+    >
       <CircleButton width={width} height={height} onCircleButtonClick={onButtonClick}>
         <Ionicons name="add" size={32} color="#fff" />
       </CircleButton>
-    </Wrapper>
+    </Animated.View>
   );
 };
 
 export default FloatingCircleButton;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 9999,
+    elevation: 9999,
+  },
+});

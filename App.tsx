@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider/ThemeProvider';
 import AppNavigator from './src/navigation/AppNavigator';
 
@@ -17,15 +18,17 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
-            <ThemedRoot />
-          </QueryClientProvider>
-        </RecoilRoot>
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <RecoilRoot>
+            <QueryClientProvider client={queryClient}>
+              <ThemedRoot />
+            </QueryClientProvider>
+          </RecoilRoot>
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 

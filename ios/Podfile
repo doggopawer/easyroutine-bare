@@ -1,123 +1,50 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, min_ios_version_supported
-prepare_react_native_project!
-
-# Explicitly disable New Architecture
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+platform :ios, '15.1'
+
+prepare_react_native_project!
 
 target 'easyroutine' do
   config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :fabric_enabled => false,
     :hermes_enabled => true,
-    # An absolute path to your application root.
+    :fabric_enabled => false,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   post_install do |installer|
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
 
     installer.pods_project.targets.each do |target|
-      puts "Modifying target: #{target.name}"
-      target.build_configurations.each do |config|
-        # Remove from GCC_PREPROCESSOR_DEFINITIONS
-        if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
-          if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].is_a?(Array)
-            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED=1')
-            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED')
-          else
-            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].gsub!(/RCT_NEW_ARCH_ENABLED(=1)?/, '')
-          end
-        end
-        
-        # Remove from OTHER_CPLUSPLUSFLAGS
-        if config.build_settings['OTHER_CPLUSPLUSFLAGS']
-          if config.build_settings['OTHER_CPLUSPLUSFLAGS'].is_a?(Array)
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED=1')
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED')
-          else
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'].gsub!(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
-          end
-        end
+      target.build_configurations.each do |build_config|
+        # ✅ iOS deployment target 통일
+        build_config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "15.1"
 
-        # Remove from OTHER_CFLAGS
-        if config.build_settings['OTHER_CFLAGS']
-          if config.build_settings['OTHER_CFLAGS'].is_a?(Array)
-            config.build_settings['OTHER_CFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED=1')
-            config.build_settings['OTHER_CFLAGS'].delete('-DRCT_NEW_ARCH_ENABLED')
-          else
-            config.build_settings['OTHER_CFLAGS'].gsub!(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
-          end
-        end
+        # ✅ New Architecture 강제 OFF
+        build_config.build_settings["RCT_NEW_ARCH_ENABLED"] = "0"
       end
     end
 
-    installer.aggregate_targets.each do |target|
-      target.user_project.targets.each do |user_target|
-        user_target.build_configurations.each do |config|
-          if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
-            if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].is_a?(Array)
-              config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].delete('RCT_NEW_ARCH_ENABLED=1')
-            else
-              config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].gsub!(/RCT_NEW_ARCH_ENABLED(=1)?/, '')
-            end
-          end
-        end
-      end
-    end
+    # ✅ xcconfig 안에 박혀있는 -DRCT_NEW_ARCH_ENABLED=1 을 직접 제거 (진짜 결정타)
+    Dir.glob("#{installer.sandbox.root}/Target Support Files/**/*.xcconfig").each do |xcconfig_path|
+      contents = File.read(xcconfig_path)
 
-    # Forcefully remove RCT_NEW_ARCH_ENABLED from all xcconfig files, project file, and podspecs
-    puts "Current directory: #{Dir.pwd}"
-    pods_dir = File.expand_path('Pods', Dir.pwd)
-    puts "Cleaning up all New Architecture flags in #{pods_dir}..."
-    
-    Dir.glob(File.join(pods_dir, "**/*")).each do |file_path|
-      next if File.directory?(file_path)
-      next unless file_path.match(/\.(xcconfig|json|pbxproj)$/)
-      
-      content = File.read(file_path)
-      if content.include?('RCT_NEW_ARCH_ENABLED') || content.include?('RCT_FABRIC_ENABLED')
-        puts "Cleaning #{file_path}"
-        new_content = content.gsub(/[-D]*RCT_NEW_ARCH_ENABLED(=1)?/, '')
-                             .gsub(/[-D]*RCT_FABRIC_ENABLED(=1)?/, '')
-        File.write(file_path, new_content)
-      end
-    end
+      # -DRCT_NEW_ARCH_ENABLED=1 제거
+      contents = contents.gsub(/-DRCT_NEW_ARCH_ENABLED=1/, "")
 
-    # Remove from file-level COMPILER_FLAGS
-    installer.pods_project.targets.each do |target|
-      next unless target.respond_to?(:source_build_phase)
-      
-      target.source_build_phase.files.each do |file|
-        if file.settings && file.settings['COMPILER_FLAGS']
-          flags = file.settings['COMPILER_FLAGS']
-          if flags.include?('RCT_NEW_ARCH_ENABLED')
-            puts "Removing RCT_NEW_ARCH_ENABLED from #{file.file_ref.path}"
-            file.settings['COMPILER_FLAGS'] = flags.gsub(/-DRCT_NEW_ARCH_ENABLED(=1)?/, '')
-          end
-        end
-      end
+      # -DRCT_NEW_ARCH_ENABLED 제거
+      contents = contents.gsub(/-DRCT_NEW_ARCH_ENABLED\b/, "")
+
+      File.write(xcconfig_path, contents)
     end
   end
 end
