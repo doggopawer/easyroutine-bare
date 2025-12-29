@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '../../../navigation/types';
 import PageLayout from '@/components/Layout/PageLayout';
-
-import Accordion from '@/headless/Accordion/Accordion';
-import Swipeable from '@/headless/Swipeable/Swipeable';
-import RoutineCard from '@/components/RoutineCard/RoutineCard';
+import FireIcon from '@/assets/images/fire.svg';
+import ERSwipeableAccordion from '@/headful/ERSwipeableAccordion/ERSwipeableAccordion';
+import RoutineSummary from '../components/RoutineSummary';
+import ExerciseItem from '@/features/exercise/ExerciseItem';
+import { HStack, VStack } from '@/shared/layout';
+import ERIconTextButton from '@/headful/ERIconTextButton';
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineList'>;
 
@@ -26,7 +28,47 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
           </Accordion.Content>
         </Accordion> */}
 
-        <RoutineCard title="가슴운동 루틴" countText="5종목" />
+        <ERSwipeableAccordion
+          visible={<RoutineSummary title="title" countText="countText" />}
+          hidden={
+            <VStack gap={12}>
+              <FlatList
+                data={[
+                  { id: '1', name: 'Exercise 1', setCount: 3 },
+                  { id: '2', name: 'Exercise 2', setCount: 2 },
+                ]}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                  // <View style={styles.exerciseRow}>
+                  <ExerciseItem exercise={item} />
+                  // </View>
+                )}
+                ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                scrollEnabled={false} // ✅ 아코디언 안에서는 보통 스크롤 끔 (부모 ScrollView에 맡김)
+              />
+              <HStack justify="space-around">
+                <ERIconTextButton
+                  icon={<FireIcon />}
+                  color="black"
+                  text="Add Exercise"
+                  onPress={() => {}}
+                />
+                <ERIconTextButton
+                  icon={<FireIcon />}
+                  color="red"
+                  text="Add Exercise"
+                  onPress={() => {}}
+                />
+              </HStack>
+            </VStack>
+          }
+          onTriggerPress={() => {
+            console.log('trigger pressed');
+          }}
+          onDeletePress={() => {
+            console.log('delete pressed');
+          }}
+        />
       </View>
     </PageLayout>
   );
