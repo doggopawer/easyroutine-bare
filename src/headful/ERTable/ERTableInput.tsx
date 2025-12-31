@@ -1,25 +1,26 @@
-import React, { useCallback } from 'react';
-import { Pressable, StyleSheet, TextInput, View, ViewStyle, TextInputProps } from 'react-native';
+// 파일: shared/headful/ERTable/ERTableInput.tsx
+// 목적: ERTable 셀에서 사용하는 "표시 전용" 입력 박스
+// - TextInput이 아니라 Pressable + Text 기반
+// - 누르면 BottomSheet 등 전용 입력 UI를 띄우는 용도
+// - underline 색상으로 active 상태만 표현
+
+import React, { useCallback, useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View, ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
 type ERTableInputProps = {
-  value: string;
+  value: string | number;
   isActive?: boolean;
-  onChangeText?: (next: string) => void;
   onPress?: () => void;
-  style?: ViewStyle;
-  editable?: boolean;
-  inputProps?: Omit<TextInputProps, 'value' | 'onChangeText' | 'editable'>;
+  placeholder?: string;
 };
 
 const ERTableInput: React.FC<ERTableInputProps> = ({
   value,
   isActive,
-  onChangeText,
   onPress,
-  style,
-  editable = true,
-  inputProps,
+
+  placeholder = '',
 }) => {
   const { theme } = useTheme();
 
@@ -27,17 +28,32 @@ const ERTableInput: React.FC<ERTableInputProps> = ({
     onPress?.();
   }, [onPress]);
 
+  const displayText = useMemo(() => {
+    const v = typeof value === 'number' ? String(value) : value;
+    return v.trim().length > 0 ? v : placeholder;
+  }, [value, placeholder]);
+
+  const isPlaceholder = useMemo(() => {
+    const v = typeof value === 'number' ? String(value) : value;
+    return v.trim().length === 0;
+  }, [value]);
+
   return (
-    <Pressable style={[styles.wrapper, style]} onPress={handlePress}>
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        editable={editable}
-        style={[styles.input, { color: theme.colors.text }]}
-        placeholderTextColor={theme.colors.textMuted}
-        textAlign="center"
-        {...inputProps}
-      />
+    <Pressable
+      style={({ pressed }) => [styles.wrapper, pressed && styles.pressed]}
+      onPress={handlePress}
+    >
+      <Text
+        style={[
+          styles.text,
+          {
+            color: isPlaceholder ? theme.colors.textMuted : theme.colors.text,
+          },
+        ]}
+        numberOfLines={1}
+      >
+        {displayText}
+      </Text>
 
       <View
         style={[
@@ -60,18 +76,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  input: {
+  pressed: {
+    opacity: 0.85,
+  },
+
+  text: {
     width: '100%',
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '400',
     marginBottom: 6,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+    textAlign: 'center',
   },
 
   underline: {
     width: 40,
-    height: 3,
-    borderRadius: 2,
+    height: 2,
   },
 });

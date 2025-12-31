@@ -14,6 +14,7 @@
     "clean": "watchman watch-del-all || true && rm -rf node_modules ios/Pods ios/Podfile.lock ios/build ~/Library/Developer/Xcode/DerivedData && yarn cache clean"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.2.8",
     "@react-native-async-storage/async-storage": "1.24.0",
     "@react-navigation/bottom-tabs": "6.6.1",
     "@react-navigation/material-top-tabs": "6.6.6",
