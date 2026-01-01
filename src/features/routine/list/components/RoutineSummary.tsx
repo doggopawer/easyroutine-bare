@@ -2,14 +2,24 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import FireIcon from '@/assets/images/fire.svg';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
+import { ColorMapper } from '@/features/app/color/mapper';
+import { Color } from '@/features/app/color/types';
 
-const RoutineSummary = ({ title, countText }: { title: string; countText: string }) => {
+const RoutineSummary = ({
+  title,
+  countText,
+  color,
+}: {
+  title: string;
+  countText: string;
+  color: Color;
+}) => {
   const { theme } = useTheme();
 
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.iconBox, { backgroundColor: theme.colors.green2 }]}>
-        <FireIcon />
+      <View style={[styles.iconBox, { backgroundColor: ColorMapper[color] }]}>
+        <FireIcon color={color} />
       </View>
 
       <View style={styles.textBox}>

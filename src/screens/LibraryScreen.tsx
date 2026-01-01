@@ -4,11 +4,15 @@ import PageLayout from '@/components/Layout/PageLayout';
 
 const LibraryScreen: React.FC = () => {
   return (
-    <PageLayout mode="tab" activeTab="Library">
-      <View style={styles.container}>
-        <Text style={styles.text}>Library Screen</Text>
-      </View>
-    </PageLayout>
+    <PageLayout
+      mode="tab"
+      activeTab="Library"
+      main={
+        <>
+          <Text style={styles.text}>Library Screen</Text>
+        </>
+      }
+    ></PageLayout>
   );
 };
 

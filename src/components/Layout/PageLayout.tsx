@@ -15,7 +15,7 @@ type OverlayRenderArgs = {
 };
 
 type BaseProps = {
-  children: React.ReactNode;
+  main: React.ReactNode;
   overlay?: (args: OverlayRenderArgs) => React.ReactNode;
   helper?: React.ReactNode;
   showHeader?: boolean;
@@ -46,7 +46,7 @@ const TAB_FOOTER_HEIGHT = 90;
 const STACK_HELPER_HEIGHT = 80;
 
 const PageLayout: React.FC<PageLayoutProps> = props => {
-  const { children, overlay, helper, showHeader = true } = props;
+  const { main, overlay, helper, showHeader = true } = props;
   const { theme } = useTheme();
 
   const insets = useSafeAreaInsets();
@@ -108,7 +108,7 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
         onScroll={e => setScrollY(e.nativeEvent.contentOffset.y)}
         scrollEventThrottle={16}
       >
-        {children}
+        {main}
       </ScrollView>
 
       {/* ================= STACK HELPER ================= */}

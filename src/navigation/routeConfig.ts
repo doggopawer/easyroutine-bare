@@ -1,16 +1,16 @@
 import { ComponentType } from 'react';
 
-import LoginScreen from '@/features/auth/screens/LoginScreen';
-import RoutineListScreen from '@/features/routine/screens/RoutineListScreen';
-import RoutineEditScreen from '@/features/routine/screens/RoutineEditScreen';
-import RoutineProgressScreen from '@/features/routine/screens/RoutineProgressScreen';
-import LibraryScreen from '@/features/library/screens/LibraryScreen';
-import MyPageScreen from '@/features/user/screens/MyPageScreen';
-import StatisticsScreen from '@/features/history/screens/StatisticsScreen';
-import CalendarScreen from '@/features/history/screens/CalendarScreen';
-import HistoryDetailScreen from '@/features/history/screens/HistoryDetailScreen';
+import RoutineListScreen from '@/screens/RoutineListScreen';
+import RoutineEditScreen from '@/screens/RoutineEditScreen';
+import RoutineProgressScreen from '@/screens/RoutineProgressScreen';
+import LibraryScreen from '@/screens/LibraryScreen';
+import MyPageScreen from '@/screens/MyPageScreen';
+import StatisticsScreen from '@/screens/StatisticsScreen';
+import CalendarScreen from '@/screens/CalendarScreen';
+import HistoryDetailScreen from '@/screens/HistoryDetailScreen';
 
 import { HistoryStackNavigator, HistoryTabNavigator, RoutineStackNavigator } from './AppNavigator';
+import LoginScreen from '@/screens/LoginScreen';
 
 export interface RouteConfig {
   name: string; // ✅ 식별자 (영어, 절대 변경 X)

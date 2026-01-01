@@ -1,24 +1,30 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../../../navigation/types';
 import PageLayout from '@/components/Layout/PageLayout';
+import { AuthStackParamList } from '@/navigation/types';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
-    <PageLayout mode="stack" title="Login" showHeader={false}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Login Screen</Text>
-        <Button
-          title="Login (Mock)"
-          onPress={() => {
-            console.log('Login pressed');
-          }}
-        />
-      </View>
-    </PageLayout>
+    <PageLayout
+      mode="stack"
+      title="Login"
+      showHeader={false}
+      main={
+        <>
+          {' '}
+          <Text style={styles.text}>Login Screen</Text>
+          <Button
+            title="Login (Mock)"
+            onPress={() => {
+              console.log('Login pressed');
+            }}
+          />
+        </>
+      }
+    ></PageLayout>
   );
 };
 

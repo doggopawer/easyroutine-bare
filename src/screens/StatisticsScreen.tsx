@@ -6,13 +6,18 @@ import { historyTabRoutes } from '@/navigation/routeConfig';
 
 const StatisticsScreen: React.FC = () => {
   return (
-    <PageLayout mode="tab" activeTab="History">
-      <LineTab routes={historyTabRoutes} activeTab="Statistics" />
-
-      <View style={styles.container}>
-        <Text style={styles.text}>Statistics Screen</Text>
-      </View>
-    </PageLayout>
+    <PageLayout
+      mode="tab"
+      activeTab="History"
+      main={
+        <>
+          <LineTab routes={historyTabRoutes} activeTab="Statistics" />
+          <View style={styles.container}>
+            <Text style={styles.text}>Statistics Screen</Text>
+          </View>
+        </>
+      }
+    />
   );
 };
 

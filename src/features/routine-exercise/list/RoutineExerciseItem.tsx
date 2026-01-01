@@ -1,38 +1,32 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
-import FireIcon from '@/assets/images/fire.svg';
+import { Image } from 'react-native';
 
-export type ExerciseItemData = {
-  id: string;
+export type RoutineExerciseItemProps = {
   name: string;
+  imageSrc: string;
   setCount: number;
 };
 
-export type ExerciseItemProps = {
-  exercise: ExerciseItemData;
-};
-
-const ExerciseItem: React.FC<ExerciseItemProps> = ({ exercise }) => {
+const RoutineExerciseItem: React.FC<RoutineExerciseItemProps> = ({ name, imageSrc, setCount }) => {
   const { theme } = useTheme();
 
   return (
     <View style={styles.container}>
       <View style={[styles.iconBox, { backgroundColor: theme.colors.green2 }]}>
-        <FireIcon />
+        <Image source={{ uri: imageSrc }} style={styles.image} resizeMode="cover" />
       </View>
 
       <View style={styles.textBox}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{exercise.name}</Text>
-        <Text style={[styles.count, { color: theme.colors.textMuted }]}>
-          {exercise.setCount} 세트
-        </Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{name}</Text>
+        <Text style={[styles.count, { color: theme.colors.textMuted }]}>{setCount} 세트</Text>
       </View>
     </View>
   );
 };
 
-export default ExerciseItem;
+export default RoutineExerciseItem;
 
 const styles = StyleSheet.create({
   container: {
@@ -47,6 +41,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  image: {
+    width: '100%',
+    height: '100%',
   },
 
   textBox: {
