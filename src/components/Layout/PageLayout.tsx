@@ -2,10 +2,14 @@ import React, { useMemo, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomNavigation from '../composites/BottomNavigation';
 import CircleButton from '@/components/CircleButton';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import type { ComponentType } from 'react';
+import type { IconProps } from 'react-native-vector-icons/Icon';
+
+const IonIcon = Ionicons as unknown as ComponentType<IconProps>;
 
 export type PageLayoutMode = 'tab' | 'stack' | 'auth';
 export type MainTabName = 'Home' | 'History' | 'Library' | 'MyPage';
@@ -82,7 +86,7 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
               <View style={styles.headerSide}>
                 <View style={[styles.backCircleWrapper, { width: 36, height: 36 }]}>
                   <CircleButton width={36} height={36} onCircleButtonClick={onBack}>
-                    <Ionicons name="chevron-back" size={20} color="#ffffff" />
+                    <IonIcon name="chevron-back" size={20} color="#ffffff" />
                   </CircleButton>
                 </View>
               </View>
