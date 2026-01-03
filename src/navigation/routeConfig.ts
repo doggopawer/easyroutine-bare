@@ -11,6 +11,7 @@ import HistoryDetailScreen from '@/screens/HistoryDetailScreen';
 
 import { HistoryStackNavigator, HistoryTabNavigator, RoutineStackNavigator } from './AppNavigator';
 import LoginScreen from '@/screens/LoginScreen';
+import RoutineCreateScreen from '@/screens/RoutinecreateScreen';
 
 export interface RouteConfig {
   name: string; // ✅ 식별자 (영어, 절대 변경 X)
@@ -45,6 +46,7 @@ export const mainTabRoutes: RouteConfig[] = [
 export const routineStackRoutes: RouteConfig[] = [
   { name: 'RoutineList', component: RoutineListScreen, title: '루틴 목록' },
   { name: 'RoutineEdit', component: RoutineEditScreen, title: '루틴 수정' },
+  { name: 'RoutineCreate', component: RoutineCreateScreen, title: '루틴 생성' },
   { name: 'RoutineProgress', component: RoutineProgressScreen, title: '루틴 진행' },
 ];
 

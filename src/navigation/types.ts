@@ -18,8 +18,9 @@ export type MainTabParamList = {
 
 export type RoutineStackParamList = {
   RoutineList: undefined;
-  RoutineEdit: undefined;
-  RoutineProgress: undefined;
+  RoutineCreate: undefined;
+  RoutineEdit: { routineId: string };
+  RoutineProgress: { routineId: string };
 };
 
 export type HistoryStackParamList = {
