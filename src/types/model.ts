@@ -44,22 +44,3 @@ export type RoutineHistory = {
   createdAt: string;
   routineExercises: RoutineExercise[];
 };
-
-// API request/response types
-export type RoutineListReq = {};
-
-export type RoutineListRes = Response<Routine[]>;
-
-// Common Response type
-export type Response<T> = {
-  result: {
-    success: boolean;
-    code: string;
-    message: string;
-  };
-  body: T;
-  page?: number;
-  size?: number;
-  total?: number;
-  totalPages?: number;
-};
