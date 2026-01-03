@@ -6,12 +6,22 @@ import { FlatList } from 'react-native-gesture-handler';
 import RoutineSummary from './RoutineSummary';
 import RoutineExerciseList from '@/features/routine-exercise/list/RoutineExerciseList';
 import { Color } from '@/features/app/color/types';
+import ERIconTextButton from '@/headful/ERIconTextButton';
+import RoutineNavigateToEditButton from '../../navigate/RoutineNavigateToEditButton';
+import { HStack, VStack } from '@/shared/layout';
+import RoutineNavigateToStartButton from '../../navigate/RoutineNavigateToStartButton';
 
 type RoutineListProps = {
   routines: Routine[];
+  onNavigateToEditPress: (routineId: string) => void;
+  onNavigateToStartPress: (routineId: string) => void;
 };
 
-const RoutineList = ({ routines }: RoutineListProps) => {
+const RoutineList = ({
+  routines,
+  onNavigateToEditPress,
+  onNavigateToStartPress,
+}: RoutineListProps) => {
   return (
     <FlatList
       data={routines}
@@ -26,7 +36,21 @@ const RoutineList = ({ routines }: RoutineListProps) => {
               color={item.color as Color}
             />
           }
-          hidden={<RoutineExerciseList routineExercises={item.routineExercises} />}
+          hidden={
+            <VStack gap={12}>
+              <RoutineExerciseList routineExercises={item.routineExercises} />
+              <HStack justify="space-around">
+                <RoutineNavigateToEditButton
+                  routineId={item.id.toString()}
+                  onNavigateToEditPress={onNavigateToEditPress}
+                />
+                <RoutineNavigateToStartButton
+                  routineId={item.id.toString()}
+                  onNavigateToStartPress={onNavigateToStartPress}
+                />
+              </HStack>
+            </VStack>
+          }
         />
       )}
       ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
