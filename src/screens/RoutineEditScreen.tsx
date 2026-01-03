@@ -1,8 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/Layout/PageLayout';
+import { Text, StyleSheet } from 'react-native';
+import PageLayout from '@/components/PageLayout/PageLayout';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RoutineStackParamList } from '@/navigation/types';
 
-const RoutineEditScreen: React.FC = () => {
+type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineEdit'>;
+
+const RoutineEditScreen: React.FC<Props> = ({ route }) => {
+  const { routineId } = route.params;
+
   return (
     <PageLayout
       mode="stack"
@@ -10,6 +16,7 @@ const RoutineEditScreen: React.FC = () => {
       main={
         <>
           <Text style={styles.text}>Routine Edit Screen</Text>
+          <Text style={styles.text}>routineId: {routineId}</Text>
         </>
       }
     />
@@ -17,11 +24,6 @@ const RoutineEditScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   text: {
     fontSize: 20,
   },

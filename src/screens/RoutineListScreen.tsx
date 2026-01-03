@@ -2,19 +2,25 @@ import React, { useRef, useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
-import PageLayout from '@/components/Layout/PageLayout';
-import ERConfirmModal from '@/headful/ERConfirmModal/ERConfirmModal';
-import ERSwipeableAccordion from '@/headful/ERSwipeableAccordion';
-import RoutineSummary from '@/features/routine/list/components/RoutineSummary';
-import RoutineExerciseList from '@/features/routine-exercise/list/RoutineExerciseList';
-import { useRoutineListQuery } from '@/features/routine/list/logic/query';
-import RoutineList from '@/features/routine/list/components/RoutineList';
-import RoutineNavigateToCreateButton from '@/features/routine/navigate/RoutineNavigateToCreateButton';
+import ERConfirmModal from '@/components/ERConfirmModal/ERConfirmModal';
+import { useRoutineListQuery } from '@/hooks/useRoutineListQuery';
+import ERFloatingActionButton from '@/components/ERFloatingActionButton/ERFloatingActionButton';
+import ERIconTitleSubTitle from '@/components/ERIconTitleSubTitle/ERIconTitleSubTitle';
+import { Color } from '@/types/common';
+import { VStack } from '@/components/VStack/VStack';
+import { HStack } from '@/components/HStack/HStack';
+import ERImageTitleSubtitle from '@/components/ERImageTitleSubTitle/ERImageTitleSubTitle';
+import ERIconTextButton from '@/components/ERIconTextButton/ERIconTextButton';
+import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
+import FireIcon from '@/assets/images/fire.svg';
+import ERSwipeableAccordion from '@/components/ERSwipeableAccordion/ERSwipeableAccordion';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineList'>;
 
 const RoutineListScreen: React.FC<Props> = ({ navigation, route }) => {
-  const [open, setOpen] = useState(false);
+  const { theme } = useTheme();
+  const [routineDeleteModalOpen, setRoutineDeleteModalOpen] = useState(false);
 
   const { res } = useRoutineListQuery({});
 
@@ -27,31 +33,78 @@ const RoutineListScreen: React.FC<Props> = ({ navigation, route }) => {
       overlay={({ scrollY }) => (
         <>
           <ERConfirmModal
-            open={open}
-            onOpenChange={setOpen}
-            title="루틴 미완료"
-            description={
-              '이 페이지를 벗어나면 지금까지 진행한 운동만\n캘린더에 저장됩니다. 운동을 종료하시겠습니까?'
-            }
+            open={routineDeleteModalOpen}
+            onOpenChange={setRoutineDeleteModalOpen}
+            title="루틴 삭제"
+            description={`루틴을 삭제하시겠습니까?`}
             cancelText="취소"
-            confirmText="운동 종료하기"
+            confirmText="루틴 삭제"
             onCancel={() => console.log('cancel')}
             onConfirm={() => console.log('confirm')}
           />
-          <RoutineNavigateToCreateButton
+          <ERFloatingActionButton
             scrollY={scrollY}
-            onNavigateToCreatePress={() => navigation.navigate('RoutineCreate')}
+            onButtonClick={() => navigation.navigate('RoutineCreate')}
           />
         </>
       )}
       main={
         <>
-          <RoutineList
-            routines={routineList}
-            onNavigateToEditPress={routineId => navigation.navigate('RoutineEdit', { routineId })}
-            onNavigateToStartPress={routineId =>
-              navigation.navigate('RoutineProgress', { routineId })
-            }
+          <FlatList
+            data={routineList}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) => (
+              <ERSwipeableAccordion
+                key={item.id}
+                onDeletePress={() => {
+                  setRoutineDeleteModalOpen(true);
+                }}
+                visible={
+                  <ERIconTitleSubTitle
+                    title={item.name}
+                    countText={item.routineExercises.length.toString()}
+                    color={item.color as Color}
+                  />
+                }
+                hidden={
+                  <VStack gap={12}>
+                    <FlatList
+                      data={item.routineExercises}
+                      keyExtractor={item => item.id.toString()}
+                      renderItem={({ item }) => (
+                        <ERImageTitleSubtitle
+                          title={item.exercise.name}
+                          subtitle={item.sets.length.toString()}
+                          imageSrc={item.exercise.image ?? ''}
+                        />
+                      )}
+                      ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+                      scrollEnabled={false}
+                    />
+                    <HStack justify="space-around">
+                      <ERIconTextButton
+                        color={theme.colors.primary1}
+                        icon={<FireIcon />}
+                        text="루틴 수정하기"
+                        onPress={() =>
+                          navigation.navigate('RoutineEdit', { routineId: item.id.toString() })
+                        }
+                      />
+                      <ERIconTextButton
+                        color={theme.colors.primary1}
+                        icon={<FireIcon />}
+                        text="루틴 시작하기"
+                        onPress={() =>
+                          navigation.navigate('RoutineProgress', { routineId: item.id.toString() })
+                        }
+                      />
+                    </HStack>
+                  </VStack>
+                }
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+            //   scrollEnabled={true}
           />
         </>
       }

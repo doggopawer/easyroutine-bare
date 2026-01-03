@@ -3,8 +3,8 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HistoryStackParamList } from '../navigation/types';
-import PageLayout from '@/components/Layout/PageLayout';
-import LineTab from '@/components/composites/LineTab';
+import PageLayout from '@/components/PageLayout/PageLayout';
+import LineTab from '@/components/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
 
 const CalendarScreen: React.FC = () => {

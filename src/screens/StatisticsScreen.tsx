@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/Layout/PageLayout';
-import LineTab from '@/components/composites/LineTab';
+import PageLayout from '@/components/PageLayout/PageLayout';
+import LineTab from '@/components/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
 
 const StatisticsScreen: React.FC = () => {

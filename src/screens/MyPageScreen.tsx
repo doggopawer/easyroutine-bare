@@ -1,16 +1,12 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import PageLayout from '@/components/Layout/PageLayout';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
-import ChipTab from '@/components/ChipTab/ChipTab';
+import ERTab from '@/components/ERTab/ERTab';
 
-import FloatingCircleButton from '@/components/FloatingCircleButton/FloatingCircleButton';
-import { VStack } from '@/shared/layout';
-import BasicToggle from '@/components/BasicToggle';
-import CircleButton from '@/components/CircleButton';
-import ColorTab from '@/components/ColorTab/ColorTab';
-import LineTab from '@/components/LineTab/LineTab';
-import IconTab from '@/components/IconTab/IconTab';
+import { VStack } from '@/components/VStack/VStack';
+import BasicToggle from '@/components/BasicToggle/BasicToggle';
+import CircleButton from '@/components/CircleButton/CircleButton';
 import ProfileBox from '@/components/ProfileBox/ProfileBox';
 
 const MyPageScreen: React.FC = () => {
@@ -19,7 +15,8 @@ const MyPageScreen: React.FC = () => {
       mode="tab"
       activeTab="MyPage"
       overlay={({ scrollY }) => (
-        <FloatingCircleButton scrollY={scrollY} onButtonClick={() => Alert.alert('FAB', 'click')} />
+        <></>
+        // <FloatingCircleButton scrollY={scrollY} onButtonClick={() => Alert.alert('FAB', 'click')} />
       )}
       main={
         <VStack>
@@ -29,49 +26,44 @@ const MyPageScreen: React.FC = () => {
             d
           </CircleButton>
 
-          <ColorTab defaultValue="VIOLET">
-            <ColorTab.Item value="VIOLET" onTabItemPress={v => Alert.alert('click', v)} />
-            <ColorTab.Item value="ORANGE" onTabItemPress={v => Alert.alert('click', v)} />
-            <ColorTab.Item value="GREEN" onTabItemPress={v => Alert.alert('click', v)} />
-            <ColorTab.Item value="BLUE" onTabItemPress={v => Alert.alert('click', v)} />
-            <ColorTab.Item value="PINK" onTabItemPress={v => Alert.alert('click', v)} />
-          </ColorTab>
+          <ERTab variant="color" defaultValue="VIOLET">
+            <ERTab.Item value="VIOLET" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="ORANGE" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="GREEN" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="BLUE" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="PINK" onTabItemPress={v => Alert.alert('click', v)} />
+          </ERTab>
 
-          <ChipTab defaultValue="ALL">
-            <ChipTab.Item value="ALL" label="전체" onTabItemPress={v => Alert.alert('click', v)} />
-            <ChipTab.Item value="A" label="A" onTabItemPress={v => Alert.alert('click', v)} />
-            <ChipTab.Item value="B" label="B" onTabItemPress={v => Alert.alert('click', v)} />
-            <ChipTab.Item
-              value="C"
-              label="C"
-              onTabItemPress={v => Alert.alert('click', v)}
-              isLast
-            />
-          </ChipTab>
+          <ERTab variant="chip" defaultValue="ALL">
+            <ERTab.Item value="ALL" label="전체" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="A" label="A" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="B" label="B" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="C" label="C" onTabItemPress={v => Alert.alert('click', v)} isLast />
+          </ERTab>
 
-          <LineTab defaultValue="A">
-            <LineTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
+          <ERTab variant="line" defaultValue="A">
+            <ERTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
               A
-            </LineTab.Item>
-            <LineTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
+            </ERTab.Item>
+            <ERTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
               B
-            </LineTab.Item>
-            <LineTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
+            </ERTab.Item>
+            <ERTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
               C
-            </LineTab.Item>
-          </LineTab>
+            </ERTab.Item>
+          </ERTab>
 
-          <IconTab defaultValue="A">
-            <IconTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
+          <ERTab variant="icon" defaultValue="A">
+            <ERTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
               A
-            </IconTab.Item>
-            <IconTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
+            </ERTab.Item>
+            <ERTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
               B
-            </IconTab.Item>
-            <IconTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
+            </ERTab.Item>
+            <ERTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
               D
-            </IconTab.Item>
-          </IconTab>
+            </ERTab.Item>
+          </ERTab>
 
           {Array.from({ length: 20 }).map((_, i) => (
             <ProfileBox key={i} imageSrc="https://picsum.photos/id/237/200/200" name="김동현" />

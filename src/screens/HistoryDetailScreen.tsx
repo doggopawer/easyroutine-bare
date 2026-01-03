@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HistoryStackParamList } from '../navigation/types';
-import PageLayout from '@/components/Layout/PageLayout';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
 type Props = NativeStackScreenProps<HistoryStackParamList, 'HistoryDetail'>;
 

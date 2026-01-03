@@ -11,7 +11,7 @@ import HistoryDetailScreen from '@/screens/HistoryDetailScreen';
 
 import { HistoryStackNavigator, HistoryTabNavigator, RoutineStackNavigator } from './AppNavigator';
 import LoginScreen from '@/screens/LoginScreen';
-import RoutineCreateScreen from '@/screens/RoutinecreateScreen';
+import RoutineCreateScreen from '@/screens/RoutineCreateScreen';
 
 export interface RouteConfig {
   name: string; // ✅ 식별자 (영어, 절대 변경 X)

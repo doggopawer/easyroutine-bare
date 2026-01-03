@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/Layout/PageLayout';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
 const LibraryScreen: React.FC = () => {
   return (

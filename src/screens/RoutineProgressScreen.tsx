@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/Layout/PageLayout';
+import PageLayout from '@/components/PageLayout/PageLayout';
 
 const RoutineProgressScreen: React.FC = () => {
   return (
@@ -9,7 +9,6 @@ const RoutineProgressScreen: React.FC = () => {
       title="루틴 진행"
       main={
         <>
-          {' '}
           <Text style={styles.text}>Routine Progress Screen</Text>
         </>
       }

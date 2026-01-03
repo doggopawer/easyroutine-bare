@@ -1,36 +1,60 @@
-// LineTab.tsx
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Select from '@/headless/Select/Select';
-import LineTabItem from './LineTabItem';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RouteConfig } from '@/navigation/routeConfig';
 
-type LineTabProps = {
-  defaultValue: string;
-  children: React.ReactNode;
-  value?: string;
-  onChange?: (value: string) => void;
-};
+interface LineTabProps {
+  routes: RouteConfig[];
 
-type LineTabComponent = React.FC<LineTabProps> & {
-  Item: typeof LineTabItem;
-};
+  activeTab?: string;
+}
 
-const LineTabRoot: React.FC<LineTabProps> = ({ defaultValue, value, onChange, children }) => {
+const LineTab: React.FC<LineTabProps> = ({ routes, activeTab }) => {
+  const navigation = useNavigation<any>();
+
   return (
-    <Select defaultValue={defaultValue} value={value} onChange={onChange}>
-      <View style={styles.wrapper}>{children}</View>
-    </Select>
+    <View style={styles.container}>
+      {routes.map((route: RouteConfig) => {
+        const isFocused = activeTab === route.name;
+
+        const onPress = () => {
+          if (!isFocused) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        return (
+          <TouchableOpacity
+            key={route.name}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            onPress={onPress}
+            style={styles.tabButton}
+          >
+            <Text style={{ color: isFocused ? '#007AFF' : '#222' }}>
+              {route.title || route.name}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 };
 
-const LineTab = LineTabRoot as LineTabComponent;
-LineTab.Item = LineTabItem;
-
-export default LineTab;
-
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flexDirection: 'row',
-    width: '100%',
+    height: 60,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingBottom: 10, // for safe area
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
+
+export default LineTab;
