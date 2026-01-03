@@ -1,18 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, Pressable, View } from 'react-native';
 
 type ERIconTextButtonProps = {
   color: string;
-  icon: React.ReactNode;
+  icon: React.ReactElement; // ✅ ReactNode -> ReactElement
   text: string;
   onPress: () => void;
 };
 
-const ERIconTextButton = ({ icon, text, onPress }: ERIconTextButtonProps) => {
+const ERIconTextButton: React.FC<ERIconTextButtonProps> = ({ icon, text, onPress, color }) => {
+  const coloredIcon = useMemo(() => {
+    return React.cloneElement(icon, {
+      color, // ✅ Ionicons 같은 경우
+      fill: color, // ✅ SVG 같은 경우
+    });
+  }, [icon, color]);
+
   return (
     <Pressable style={styles.container} onPress={onPress}>
-      {icon}
-      <Text>{text}</Text>
+      {coloredIcon}
+      <Text style={[styles.text, { color }]}>{text}</Text>
     </Pressable>
   );
 };
@@ -24,5 +31,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+
+  text: {
+    fontSize: 14,
+    fontWeight: '700',
   },
 });
