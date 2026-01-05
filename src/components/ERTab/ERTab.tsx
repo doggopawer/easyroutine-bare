@@ -1,5 +1,5 @@
 // 파일: shared/headful/ERTab/ERTab.tsx
-// 목적: ChipTab / ColorTab / IconTab 통합 ERTab 컴포넌트
+// 목적: ChipTab / ColorTab / IconTab / LineTab / ImageTextTab 통합 ERTab 컴포넌트
 // - Select(headless) 기반
 // - variant를 Context로 전달하여 Item 스타일 분기
 // - controlled/uncontrolled 지원
@@ -9,22 +9,22 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import Select from '@/headless/Select/Select';
 import ERTabItem from './ERTabItem';
 
-export type ERTabVariant = 'chip' | 'color' | 'icon' | 'line';
+export type ERTabVariant = 'chip' | 'color' | 'icon' | 'line' | 'image-text';
 
 type ERTabProps = {
-  variant: ERTabVariant;
-  defaultValue: string;
-  children: React.ReactNode;
-  value?: string;
-  onChange?: (value: string) => void;
+  variant: ERTabVariant; // ✅ 탭 스타일 타입
+  defaultValue: string; // ✅ uncontrolled 초기값
+  children: React.ReactNode; // ✅ TabItem들
+  value?: string; // ✅ controlled value
+  onChange?: (value: string) => void; // ✅ value 변경 콜백
 };
 
 type ERTabComponent = React.FC<ERTabProps> & {
-  Item: typeof ERTabItem;
+  Item: typeof ERTabItem; // ✅ ERTab.Item 지원
 };
 
 type ERTabContextValue = {
-  variant: ERTabVariant;
+  variant: ERTabVariant; // ✅ 현재 variant 공유
 };
 
 const ERTabContext = createContext<ERTabContextValue | null>(null);
@@ -43,6 +43,7 @@ const ERTabRoot: React.FC<ERTabProps> = ({ variant, defaultValue, value, onChang
   return (
     <ERTabContext.Provider value={contextValue}>
       <Select defaultValue={defaultValue} value={value} onChange={onChange}>
+        {/* ✅ CHIP */}
         {variant === 'chip' ? (
           <ScrollView
             horizontal
@@ -54,13 +55,16 @@ const ERTabRoot: React.FC<ERTabProps> = ({ variant, defaultValue, value, onChang
           </ScrollView>
         ) : (
           <View
-            style={
+            style={[
+              styles.baseRow,
               variant === 'color'
                 ? styles.colorRow
                 : variant === 'line'
                 ? styles.lineRow
-                : styles.iconRow
-            }
+                : variant === 'image-text'
+                ? styles.imageTextColumn
+                : styles.iconRow,
+            ]}
           >
             {children}
           </View>
@@ -80,10 +84,16 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 32,
   },
+
   chipScrollContent: {},
+
   chipRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+
+  baseRow: {
+    width: '100%',
   },
 
   colorRow: {
@@ -93,7 +103,6 @@ const styles = StyleSheet.create({
   },
 
   iconRow: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     minHeight: 52,
@@ -101,8 +110,13 @@ const styles = StyleSheet.create({
   },
 
   lineRow: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+
+  // ✅ image-text는 리스트처럼 세로로 쌓임
+  imageTextColumn: {
+    flexDirection: 'column',
+    width: '100%',
   },
 });
