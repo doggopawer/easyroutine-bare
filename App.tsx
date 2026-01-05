@@ -1,6 +1,3 @@
-// App.tsx
-// 기능: SafeArea/ThemeProvider 유지 + Recoil/ReactQuery 추가 + AuthStack/AppStack 분기
-
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -8,7 +5,10 @@ import { enableScreens } from 'react-native-screens';
 import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'; // ✅ 추가
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
+import Toast from 'react-native-toast-message';
+import ERToast from '@/components/ERToast/ERToast'; // ✅✅✅ 추가
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider/ThemeProvider';
 import AppNavigator from './src/navigation/AppNavigator';
@@ -16,8 +16,13 @@ import AppNavigator from './src/navigation/AppNavigator';
 // screens 최적화(앱 시작 1회)
 enableScreens();
 
-// --- App 엔트리: Provider + ThemeProvider + NavigationContainer ---
 const queryClient = new QueryClient();
+
+const toastConfig = {
+  success: (props: any) => <ERToast {...props} type="success" />,
+  error: (props: any) => <ERToast {...props} type="error" />,
+  info: (props: any) => <ERToast {...props} type="info" />,
+};
 
 const App: React.FC = () => {
   return (
@@ -26,9 +31,11 @@ const App: React.FC = () => {
         <ThemeProvider>
           <RecoilRoot>
             <QueryClientProvider client={queryClient}>
-              {/* ✅✅✅ BottomSheetModalProvider는 Navigation보다 위에 있어야 함 */}
               <BottomSheetModalProvider>
                 <ThemedRoot />
+
+                {/* ✅✅✅ Toast 컴포넌트는 최하단에 두고 config 적용 */}
+                <Toast config={toastConfig} position="top" topOffset={60} />
               </BottomSheetModalProvider>
             </QueryClientProvider>
           </RecoilRoot>
@@ -39,7 +46,6 @@ const App: React.FC = () => {
 };
 
 const ThemedRoot: React.FC = () => {
-  // 기능: 테마에 맞춘 StatusBar + 로그인 여부에 따른 스택 분기
   const { isDark } = useTheme();
 
   return (

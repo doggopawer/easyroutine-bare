@@ -2,7 +2,7 @@
 
 import { MESSAGE } from '@/constants/messages';
 import { Err, Ok, Result } from '@/hooks/useResultQuery';
-import { RoutineListReq, RoutineListRes } from '@/types/model';
+import { RoutineListReq, RoutineListRes } from '@/types/routine';
 import axiosInstance from '@/utils/axios';
 import { extractApiErrorMessage } from '@/utils/error';
 

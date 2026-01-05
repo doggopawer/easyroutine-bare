@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
@@ -23,6 +23,12 @@ type BaseProps = {
   overlay?: (args: OverlayRenderArgs) => React.ReactNode;
   helper?: React.ReactNode;
   showHeader?: boolean;
+
+  /**
+   * ✅ 기본 true
+   * - FlatList/SectionList 같은 VirtualizedList 쓰는 화면에서는 false로 설정
+   */
+  scrollable?: boolean;
 };
 
 type TabModeProps = BaseProps & {
@@ -50,7 +56,7 @@ const TAB_FOOTER_HEIGHT = 90;
 const STACK_HELPER_HEIGHT = 80;
 
 const PageLayout: React.FC<PageLayoutProps> = props => {
-  const { main, overlay, helper, showHeader = true } = props;
+  const { main, overlay, helper, showHeader = true, scrollable = false } = props;
   const { theme } = useTheme();
 
   const insets = useSafeAreaInsets();
@@ -82,7 +88,6 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
         <View style={[styles.header, { backgroundColor: theme.colors.gray7 }]}>
           {isStack ? (
             <>
-              {/* ✅ back button: CircleButton으로 감싸기 */}
               <View style={styles.headerSide}>
                 <View style={[styles.backCircleWrapper, { width: 36, height: 36 }]}>
                   <CircleButton width={36} height={36} onCircleButtonClick={onBack}>
@@ -106,14 +111,18 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
       )}
 
       {/* ================= CONTENT ================= */}
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={{ padding: 16, paddingBottom }}
-        onScroll={e => setScrollY(e.nativeEvent.contentOffset.y)}
-        scrollEventThrottle={16}
-      >
-        {main}
-      </ScrollView>
+      {scrollable ? (
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={{ padding: 16, paddingBottom }}
+          onScroll={e => setScrollY(e.nativeEvent.contentOffset.y)}
+          scrollEventThrottle={16}
+        >
+          {main}
+        </ScrollView>
+      ) : (
+        <View style={[styles.nonScrollContent, { padding: 16, paddingBottom }]}>{main}</View>
+      )}
 
       {/* ================= STACK HELPER ================= */}
       {isStack && helper ? (
@@ -138,7 +147,7 @@ const PageLayout: React.FC<PageLayoutProps> = props => {
         </View>
       ) : null}
 
-      {/* ✅✅✅ ================= OVERLAY (맨 마지막!) ================= */}
+      {/* ✅✅✅ ================= OVERLAY ================= */}
       {overlay ? (
         <View style={styles.overlay} pointerEvents="box-none">
           {overlay({ scrollY })}
@@ -180,6 +189,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   content: {
+    flex: 1,
+  },
+  nonScrollContent: {
     flex: 1,
   },
   stackHelper: {
