@@ -15,3 +15,7 @@ export type RoutineDeleteRes = Response<void>;
 export type RoutineCreateReq = Routine;
 
 export type RoutineCreateRes = Response<void>;
+
+export type RoutineUpdateReq = Routine;
+
+export type RoutineUpdateRes = Response<void>;

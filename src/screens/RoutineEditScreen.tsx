@@ -22,8 +22,8 @@ import { Category } from '@/types/common';
 import ERCheckbox from '@/components/ERCheckbox/ERCheckbox';
 import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import ERButton from '@/components/ERButton/ERButton';
-import { useRoutineCreateMutation } from '@/hooks/useRoutineCreateMuation';
 import Toast from 'react-native-toast-message';
+import { useRoutineUpdateMutation } from '@/hooks/useRoutineUpdateMutation';
 
 /* -------------------------------------------------------------------------- */
 /*                                ✅ 타입 정의                                  */
@@ -48,10 +48,14 @@ type ActiveCell = {
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineEdit'>;
 
 const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { theme } = useTheme();
-  const { routineId } = route.params;
   const { res } = useExerciseListQuery({});
-  const { mutateAsync: createRoutineMutate } = useRoutineCreateMutation();
+  const { theme } = useTheme();
+
+  const { routineId, routine: initialRoutine } = route.params; // ✅ params에서 가져오기
+
+  const [routine, setRoutine] = useState<Routine>(initialRoutine);
+
+  const { mutateAsync: updateRoutineMutate } = useRoutineUpdateMutation();
 
   const exerciseList = res?.body ?? [];
 
@@ -110,32 +114,32 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
   /*                                ✅ Routine 전체 상태                           */
   /* -------------------------------------------------------------------------- */
 
-  const [routine, setRoutine] = useState<Routine>({
-    id: routineId,
-    order: 1,
-    name: '상체 루틴',
-    color: '#855CF8',
-    routineExercises: [
-      {
-        id: 'routine-ex-1',
-        order: 1,
-        exercise: {
-          id: 'exercise-1',
-          name: '벤치프레스',
-          image: 'https://via.placeholder.com/150',
-          category: 'CHEST',
-          types: ['WEIGHT', 'COUNT', 'REST'],
-          isEditable: 0,
-          shareLevel: 1,
-        },
-        sets: [
-          { id: 'set-1', order: 1, weight: 10, rep: 10, exerciseSec: 300, restSec: 60 },
-          { id: 'set-2', order: 2, weight: 12.5, rep: 8, exerciseSec: 270, restSec: 90 },
-          { id: 'set-3', order: 3, weight: 15, rep: 6, exerciseSec: 180, restSec: 60 },
-        ],
-      },
-    ],
-  });
+  // const [routine, setRoutine] = useState<Routine>({
+  //   id: routineId,
+  //   order: 1,
+  //   name: '상체 루틴',
+  //   color: '#855CF8',
+  //   routineExercises: [
+  //     {
+  //       id: 'routine-ex-1',
+  //       order: 1,
+  //       exercise: {
+  //         id: 'exercise-1',
+  //         name: '벤치프레스',
+  //         image: 'https://via.placeholder.com/150',
+  //         category: 'CHEST',
+  //         types: ['WEIGHT', 'COUNT', 'REST'],
+  //         isEditable: 0,
+  //         shareLevel: 1,
+  //       },
+  //       sets: [
+  //         { id: 'set-1', order: 1, weight: 10, rep: 10, exerciseSec: 300, restSec: 60 },
+  //         { id: 'set-2', order: 2, weight: 12.5, rep: 8, exerciseSec: 270, restSec: 90 },
+  //         { id: 'set-3', order: 3, weight: 15, rep: 6, exerciseSec: 180, restSec: 60 },
+  //       ],
+  //     },
+  //   ],
+  // });
 
   const routineExercises = routine.routineExercises;
 
@@ -264,7 +268,7 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const handleCreateRoutine = useCallback(async () => {
     try {
-      await createRoutineMutate(routine);
+      await updateRoutineMutate(routine);
 
       // ✅✅✅ 성공 토스트
       Toast.show({
@@ -285,7 +289,7 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
 
       console.log(e);
     }
-  }, [createRoutineMutate, routine, navigation]);
+  }, [updateRoutineMutate, routine, navigation]);
 
   return (
     <PageLayout

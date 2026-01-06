@@ -113,7 +113,10 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
                       icon={<FireIcon />}
                       text="루틴 수정하기"
                       onPress={() =>
-                        navigation.navigate('RoutineEdit', { routineId: item.id.toString() })
+                        navigation.navigate('RoutineEdit', {
+                          routineId: item.id.toString(),
+                          routine: item,
+                        })
                       }
                     />
 

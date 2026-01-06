@@ -1,3 +1,4 @@
+import { Routine } from '@/types/model';
 import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type RootStackParamList = {
@@ -19,7 +20,10 @@ export type MainTabParamList = {
 export type RoutineStackParamList = {
   RoutineList: undefined;
   RoutineCreate: undefined;
-  RoutineEdit: { routineId: string };
+  RoutineEdit: {
+    routineId: string;
+    routine: Routine; // ✅ 추가
+  };
   RoutineProgress: { routineId: string };
 };
 
