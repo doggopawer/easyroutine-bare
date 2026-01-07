@@ -9,6 +9,14 @@ import { HStack } from '../HStack/HStack';
 type ERSwipeableAccordionProps = {
   visible: React.ReactNode;
   hidden: React.ReactNode;
+
+  // ✅ controlled accordion
+  open?: boolean;
+  onOpenChange?: (next: boolean) => void;
+
+  // ✅ swipe 제어
+  swipeEnabled?: boolean;
+
   onTriggerPress?: () => void;
   onDeletePress?: () => void;
 };
@@ -16,13 +24,19 @@ type ERSwipeableAccordionProps = {
 const ERSwipeableAccordion = ({
   visible,
   hidden,
+  open,
+  onOpenChange,
+  swipeEnabled = true,
   onTriggerPress,
   onDeletePress,
 }: ERSwipeableAccordionProps) => {
   const { theme } = useTheme();
 
   return (
-    <Swipeable maxSwipeDistance={80} borderRadius={12}>
+    <Swipeable
+      maxSwipeDistance={swipeEnabled ? 80 : 0} // ✅ 스와이프 비활성화 가능
+      borderRadius={12}
+    >
       {/* ✅ 스와이프 히든 영역 */}
       <Swipeable.Hidden style={styles.swipeHidden}>
         <Pressable
@@ -38,9 +52,16 @@ const ERSwipeableAccordion = ({
       </Swipeable.Hidden>
 
       <Swipeable.Visible>
-        <Accordion>
+        {/* ✅ open/onOpenChange 지원 */}
+        <Accordion open={open} onChange={onOpenChange}>
           <View style={[styles.cardWrapper, { backgroundColor: theme.colors.white1 }]}>
-            <Accordion.Trigger style={styles.triggerRow} onPress={() => onTriggerPress?.()}>
+            <Accordion.Trigger
+              style={styles.triggerRow}
+              onPress={() => {
+                onTriggerPress?.();
+                onOpenChange?.(!open); // ✅ controlled toggle
+              }}
+            >
               <HStack justify="space-between" width="100%" align="center">
                 <View style={{ flex: 1, minWidth: 0 }}>{visible}</View>
 
@@ -74,7 +95,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-    // ✅ 이게 핵심: 오른쪽 라운드 처리
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
   },

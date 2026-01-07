@@ -125,7 +125,10 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
                       icon={<FireIcon />}
                       text="루틴 시작하기"
                       onPress={() =>
-                        navigation.navigate('RoutineProgress', { routineId: item.id.toString() })
+                        navigation.navigate('RoutineProgress', {
+                          routineId: item.id.toString(),
+                          routine: item,
+                        })
                       }
                     />
                   </HStack>

@@ -24,7 +24,7 @@ export type RoutineStackParamList = {
     routineId: string;
     routine: Routine; // ✅ 추가
   };
-  RoutineProgress: { routineId: string };
+  RoutineProgress: { routineId: string; routine: Routine };
 };
 
 export type HistoryStackParamList = {
