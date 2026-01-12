@@ -1,7 +1,7 @@
 // 파일: shared/headful/ERTab/ERTabItem.tsx
 // 목적: ERTab.Item
 // - Select.Item 기반
-// - variant별 UI 분기 (chip / color / icon / line / image-text)
+// - variant별 UI 분기 (chip / color / icon / line / image-text / image-text-arrow)
 // - active 여부는 zustand selector로 최소 구독
 
 import React, { memo, useCallback, useMemo } from 'react';
@@ -135,6 +135,8 @@ const ERTabItemBase: React.FC<ERTabItemProps> = ({
     [disabled]
   );
 
+  const isImageTextVariant = variant === 'image-text' || variant === 'image-text-arrow';
+
   return (
     <Select.Item
       value={value}
@@ -205,8 +207,8 @@ const ERTabItemBase: React.FC<ERTabItemProps> = ({
         </View>
       )}
 
-      {/* ✅ IMAGE-TEXT */}
-      {variant === 'image-text' && (
+      {/* ✅ IMAGE-TEXT / IMAGE-TEXT-ARROW */}
+      {isImageTextVariant && (
         <View style={[styles.imageTextRow, imageTextRowStyle]}>
           {/* ✅ 썸네일 */}
           <View style={styles.imageBox}>
@@ -222,12 +224,17 @@ const ERTabItemBase: React.FC<ERTabItemProps> = ({
             </Text>
           </View>
 
-          {/* ✅ 체크 아이콘 */}
+          {/* ✅ 오른쪽 아이콘 */}
           <View style={styles.imageTextRight}>
-            {active ? (
-              <IonIcon name="checkmark" size={26} color={theme.colors.primary1} />
+            {variant === 'image-text' ? (
+              active ? (
+                <IonIcon name="checkmark" size={26} color={theme.colors.primary1} />
+              ) : (
+                <View style={{ width: 26, height: 26 }} />
+              )
             ) : (
-              <View style={{ width: 26, height: 26 }} />
+              // ✅✅✅ image-text-arrow 는 무조건 arrow 표시
+              <IonIcon name="chevron-forward" size={24} color={theme.colors.gray4} />
             )}
           </View>
         </View>
@@ -299,7 +306,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    // paddingHorizontal: 2,
   },
 
   imageBox: {

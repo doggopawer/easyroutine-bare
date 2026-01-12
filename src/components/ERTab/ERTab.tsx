@@ -1,5 +1,5 @@
 // 파일: shared/headful/ERTab/ERTab.tsx
-// 목적: ChipTab / ColorTab / IconTab / LineTab / ImageTextTab 통합 ERTab 컴포넌트
+// 목적: ChipTab / ColorTab / IconTab / LineTab / ImageTextTab / ImageTextArrowTab 통합 ERTab 컴포넌트
 // - Select(headless) 기반
 // - variant를 Context로 전달하여 Item 스타일 분기
 // - controlled/uncontrolled 지원
@@ -9,7 +9,7 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import Select from '@/headless/Select/Select';
 import ERTabItem from './ERTabItem';
 
-export type ERTabVariant = 'chip' | 'color' | 'icon' | 'line' | 'image-text';
+export type ERTabVariant = 'chip' | 'color' | 'icon' | 'line' | 'image-text' | 'image-text-arrow';
 
 type ERTabProps = {
   variant: ERTabVariant; // ✅ 탭 스타일 타입
@@ -61,7 +61,7 @@ const ERTabRoot: React.FC<ERTabProps> = ({ variant, defaultValue, value, onChang
                 ? styles.colorRow
                 : variant === 'line'
                 ? styles.lineRow
-                : variant === 'image-text'
+                : variant === 'image-text' || variant === 'image-text-arrow'
                 ? styles.imageTextColumn
                 : styles.iconRow,
             ]}
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // ✅ image-text는 리스트처럼 세로로 쌓임
+  // ✅ image-text / image-text-arrow 는 리스트처럼 세로로 쌓임
   imageTextColumn: {
     flexDirection: 'column',
     width: '100%',
