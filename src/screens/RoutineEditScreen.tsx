@@ -344,65 +344,63 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
           {/* ✅ 운동 라이브러리 BottomSheet                                       */}
           {/* ------------------------------------------------------------------ */}
 
-          <ERBottomSheet ref={libraryRef} snapPoints={['70%']} onClose={closeLibrary}>
-            <VStack style={{ flex: 1 }}>
-              <View style={{ padding: 16 }}>
-                <ERInput
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholder="검색"
-                  containerStyle={{ borderRadius: 999 }}
-                  inputStyle={{ fontWeight: '700' }}
+          <ERBottomSheet ref={libraryRef} onClose={closeLibrary}>
+            <View style={{ paddingVertical: 16 }}>
+              <ERInput
+                value={search}
+                onChangeText={setSearch}
+                placeholder="검색"
+                containerStyle={{ borderRadius: 999 }}
+                inputStyle={{ fontWeight: '700' }}
+              />
+
+              <View style={{ height: 16 }} />
+
+              <ERTab
+                variant="chip"
+                defaultValue={Category.ALL}
+                value={category}
+                onChange={(v: string) => setCategory(v as Category)}
+              >
+                <ERTab.Item value={Category.ALL}>전체</ERTab.Item>
+                <ERTab.Item value={Category.CHEST}>가슴</ERTab.Item>
+                <ERTab.Item value={Category.BACK}>등</ERTab.Item>
+                <ERTab.Item value={Category.SHOULDER}>어깨</ERTab.Item>
+                <ERTab.Item value={Category.LEG}>하체</ERTab.Item>
+                <ERTab.Item value={Category.ARM}>팔</ERTab.Item>
+                <ERTab.Item value={Category.ETC}>기타</ERTab.Item>
+              </ERTab>
+            </View>
+
+            {/* ✅ 스크롤 리스트 영역 */}
+            <View style={{ height: 300 }}>
+              <ERCheckbox
+                variant="image-text"
+                defaultValue={[]}
+                value={selectedExerciseIds}
+                onChange={setSelectedExerciseIds}
+              >
+                <FlatList
+                  data={exerciseList}
+                  keyExtractor={item => String(item.id)}
+                  showsVerticalScrollIndicator={false}
+                  renderItem={({ item }) => (
+                    <ERCheckbox.Item
+                      value={String(item.id)}
+                      title={item.name}
+                      imageSrc={item.image ?? undefined}
+                    />
+                  )}
                 />
+              </ERCheckbox>
+            </View>
 
-                <View style={{ height: 16 }} />
-
-                <ERTab
-                  variant="chip"
-                  defaultValue={Category.ALL}
-                  value={category}
-                  onChange={(v: string) => setCategory(v as Category)}
-                >
-                  <ERTab.Item value={Category.ALL}>전체</ERTab.Item>
-                  <ERTab.Item value={Category.CHEST}>가슴</ERTab.Item>
-                  <ERTab.Item value={Category.BACK}>등</ERTab.Item>
-                  <ERTab.Item value={Category.SHOULDER}>어깨</ERTab.Item>
-                  <ERTab.Item value={Category.LEG}>하체</ERTab.Item>
-                  <ERTab.Item value={Category.ARM}>팔</ERTab.Item>
-                  <ERTab.Item value={Category.ETC}>기타</ERTab.Item>
-                </ERTab>
-              </View>
-
-              {/* ✅ 스크롤 리스트 영역 */}
-              <View style={{ flex: 1, paddingHorizontal: 16 }}>
-                <ERCheckbox
-                  variant="image-text"
-                  defaultValue={[]}
-                  value={selectedExerciseIds}
-                  onChange={setSelectedExerciseIds}
-                >
-                  <FlatList
-                    data={exerciseList}
-                    keyExtractor={item => String(item.id)}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (
-                      <ERCheckbox.Item
-                        value={String(item.id)}
-                        title={item.name}
-                        imageSrc={item.image ?? undefined}
-                      />
-                    )}
-                  />
-                </ERCheckbox>
-              </View>
-
-              {/* ✅ 버튼 영역 */}
-              <View style={{ padding: 16 }}>
-                <ERButton variant="solid" onPress={handleAddExercisesToRoutine}>
-                  운동 추가
-                </ERButton>
-              </View>
-            </VStack>
+            {/* ✅ 버튼 영역 */}
+            <View style={{ padding: 16 }}>
+              <ERButton variant="solid" onPress={handleAddExercisesToRoutine}>
+                운동 추가
+              </ERButton>
+            </View>
           </ERBottomSheet>
         </>
       )}
