@@ -13,7 +13,7 @@ import ERCheckboxItem from './ERCheckboxItem';
 /*                                ✅ 타입 정의                                  */
 /* -------------------------------------------------------------------------- */
 
-export type ERCheckboxVariant = 'image-text';
+export type ERCheckboxVariant = 'image-text' | 'text';
 
 type ERCheckboxProps = {
   variant: ERCheckboxVariant; // ✅ 스타일 타입
@@ -53,7 +53,7 @@ const ERCheckboxRoot: React.FC<ERCheckboxProps> = ({
   return (
     <ERCheckboxContext.Provider value={contextValue}>
       <ManySelect defaultValue={defaultValue} value={value} onChange={onChange}>
-        <View style={[styles.root]}>{children}</View>
+        <View style={styles.root}>{children}</View>
       </ManySelect>
     </ERCheckboxContext.Provider>
   );

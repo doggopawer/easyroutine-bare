@@ -2,7 +2,7 @@
 // 목적: ERCheckbox.Item
 // - ManySelect.Item 기반
 // - variant별 UI 분기
-// - 현재는 image-text variant만 지원
+// - image-text / text 지원
 // - 체크 표시를 체크박스로 표현
 
 import React, { memo, useMemo } from 'react';
@@ -26,6 +26,9 @@ type ERCheckboxItemProps = {
   title: string;
   imageSrc?: string;
   disabled?: boolean;
+
+  // ✅ text variant 전용
+  containerStyle?: ViewStyle;
 };
 
 const ERCheckboxItemBase: React.FC<ERCheckboxItemProps> = ({
@@ -33,6 +36,7 @@ const ERCheckboxItemBase: React.FC<ERCheckboxItemProps> = ({
   title,
   imageSrc,
   disabled,
+  containerStyle,
 }) => {
   const { theme } = useTheme();
   const { variant } = useERCheckboxContext();
@@ -40,7 +44,7 @@ const ERCheckboxItemBase: React.FC<ERCheckboxItemProps> = ({
   const store = useManySelectStoreContext();
   const active = useManySelectStore(store, s => s.isSelected(value));
 
-  const rowStyle: ViewStyle = useMemo(
+  const opacityStyle: ViewStyle = useMemo(
     () => ({
       opacity: disabled ? 0.5 : 1,
     }),
@@ -48,51 +52,84 @@ const ERCheckboxItemBase: React.FC<ERCheckboxItemProps> = ({
   );
 
   /* -------------------------------------------------------------------------- */
-  /*                         ✅ 현재는 image-text만 구현                          */
+  /*                         ✅ image-text variant                               */
   /* -------------------------------------------------------------------------- */
 
-  if (variant !== 'image-text') return null;
+  if (variant === 'image-text') {
+    return (
+      <ManySelect.Item value={value} disabled={disabled}>
+        <View style={[styles.imageTextRow, opacityStyle]}>
+          {/* ✅ 썸네일 */}
+          <View style={styles.imageBox}>
+            {imageSrc ? (
+              <Image source={{ uri: imageSrc }} style={styles.image} resizeMode="cover" />
+            ) : null}
+          </View>
 
-  return (
-    <ManySelect.Item value={value} disabled={disabled}>
-      <View style={[styles.row, rowStyle]}>
-        {/* ✅ 썸네일 */}
-        <View style={styles.imageBox}>
-          {imageSrc ? (
-            <Image source={{ uri: imageSrc }} style={styles.image} resizeMode="cover" />
-          ) : null}
+          {/* ✅ 텍스트 */}
+          <View style={styles.imageTextCenter}>
+            <Text style={[styles.imageTextTitle, { color: theme.colors.text }]} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
+
+          {/* ✅ 체크박스 */}
+          <View style={styles.imageTextRight}>
+            <View
+              style={[
+                styles.checkbox,
+                {
+                  borderColor: active ? theme.colors.primary1 : theme.colors.gray4,
+                  backgroundColor: active ? theme.colors.primary1 : 'transparent',
+                },
+              ]}
+            >
+              {active ? <IonIcon name="checkmark" size={16} color={theme.colors.white1} /> : null}
+            </View>
+          </View>
         </View>
+      </ManySelect.Item>
+    );
+  }
 
-        {/* ✅ 텍스트 */}
-        <View style={styles.center}>
-          <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
-            {title}
-          </Text>
-        </View>
+  /* -------------------------------------------------------------------------- */
+  /*                              ✅ text variant                                */
+  /* -------------------------------------------------------------------------- */
 
-        {/* ✅ 체크박스 */}
-        <View style={styles.right}>
+  if (variant === 'text') {
+    return (
+      <ManySelect.Item value={value} disabled={disabled}>
+        <View style={[styles.textRow, opacityStyle, containerStyle]}>
+          {/* ✅ 체크박스 */}
           <View
             style={[
-              styles.checkbox,
+              styles.textCheckbox,
               {
                 borderColor: active ? theme.colors.primary1 : theme.colors.gray4,
                 backgroundColor: active ? theme.colors.primary1 : 'transparent',
               },
             ]}
           >
-            {active ? <IonIcon name="checkmark" size={16} color={theme.colors.white1} /> : null}
+            {active ? <IonIcon name="checkmark" size={14} color={theme.colors.white1} /> : null}
           </View>
+
+          {/* ✅ 텍스트 */}
+          <Text style={[styles.textTitle, { color: theme.colors.text }]}>{title}</Text>
         </View>
-      </View>
-    </ManySelect.Item>
-  );
+      </ManySelect.Item>
+    );
+  }
+
+  return null;
 };
 
 export default memo(ERCheckboxItemBase);
 
 const styles = StyleSheet.create({
-  row: {
+  /* -------------------------------------------------------------------------- */
+  /*                               IMAGE-TEXT                                   */
+  /* -------------------------------------------------------------------------- */
+  imageTextRow: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -114,25 +151,24 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 
-  center: {
+  imageTextCenter: {
     flex: 1,
     paddingLeft: 14,
     justifyContent: 'center',
     minWidth: 0,
   },
 
-  title: {
+  imageTextTitle: {
     fontSize: 16,
     fontWeight: '700',
   },
 
-  right: {
+  imageTextRight: {
     width: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
-  /* ✅ 체크박스 UI */
   checkbox: {
     width: 22,
     height: 22,
@@ -140,5 +176,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  TEXT                                      */
+  /* -------------------------------------------------------------------------- */
+  textRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+
+  textCheckbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  textTitle: {
+    fontSize: 14,
+    fontWeight: '400',
   },
 });
