@@ -26,6 +26,7 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -33,26 +34,46 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+
+	<!-- ✅ 기존 위치 권한 -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>운동 기록 기능을 위해 위치 권한이 필요합니다.</string>
+
+	<!-- ✅✅✅ [추가] 갤러리 접근 권한 -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>운동 이미지를 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
+
+	<!-- ✅✅✅ [추가] 갤러리에 저장 권한 (iOS 권장) -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>운동 이미지를 저장하기 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
+
+	<!-- ✅✅✅ [추가] 카메라 권한 -->
+	<key>NSCameraUsageDescription</key>
+	<string>운동 이미지를 촬영하기 위해 카메라 접근 권한이 필요합니다.</string>
+
 	<key>RCTNewArchEnabled</key>
 	<false/>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ionicons.ttf</string>
 	</array>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
