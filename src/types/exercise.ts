@@ -11,3 +11,11 @@ export type ExerciseDeleteReq = {
 };
 
 export type ExerciseDeleteRes = Response<void>;
+
+export type ExerciseCreateReq = Omit<Exercise, 'id'>;
+
+export type ExerciseCreateRes = Response<void>;
+
+export type ExerciseUpdateReq = Exercise;
+
+export type ExerciseUpdateRes = Response<void>;
