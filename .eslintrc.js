@@ -22,6 +22,7 @@ module.exports = {
     // React 규칙
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
+    'react/no-unstable-nested-components': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
 
