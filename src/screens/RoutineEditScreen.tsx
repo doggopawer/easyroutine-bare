@@ -33,8 +33,12 @@ export type MetricType = 'weight' | 'rep' | 'exerciseSec' | 'restSec';
 export type InputKind = 'decimal' | 'integer' | 'duration';
 
 export const getInputKind = (type: MetricType): InputKind => {
-  if (type === 'weight') return 'decimal';
-  if (type === 'rep') return 'integer';
+  if (type === 'weight') {
+    return 'decimal';
+  }
+  if (type === 'rep') {
+    return 'integer';
+  }
   return 'duration';
 };
 
@@ -88,7 +92,9 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
   const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
 
   const inputKind = useMemo<InputKind | null>(() => {
-    if (!activeCell) return null;
+    if (!activeCell) {
+      return null;
+    }
     return getInputKind(activeCell.metric);
   }, [activeCell]);
 
@@ -160,15 +166,23 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
     const mm = Number(mmRaw);
     const ss = Number(ssRaw);
 
-    if (Number.isNaN(mm) || Number.isNaN(ss)) return 0;
+    if (Number.isNaN(mm) || Number.isNaN(ss)) {
+      return 0;
+    }
     return mm * 60 + ss;
   }, []);
 
   const getCellValue = useCallback(
     (set: Set, metric: MetricType) => {
-      if (metric === 'weight') return String(set.weight ?? '');
-      if (metric === 'rep') return String(set.rep ?? '');
-      if (metric === 'exerciseSec') return formatDuration(set.exerciseSec);
+      if (metric === 'weight') {
+        return String(set.weight ?? '');
+      }
+      if (metric === 'rep') {
+        return String(set.rep ?? '');
+      }
+      if (metric === 'exerciseSec') {
+        return formatDuration(set.exerciseSec);
+      }
       return formatDuration(set.restSec);
     },
     [formatDuration]
@@ -180,20 +194,31 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const handleKeyPadConfirm = useCallback(
     (next: string) => {
-      if (!activeCell) return;
+      if (!activeCell) {
+        return;
+      }
 
       setRoutine((prev: Routine) => {
         const nextRoutineExercises: RoutineExercise[] = prev.routineExercises.map(
           (re: RoutineExercise) => {
-            if (String(re.id) !== activeCell.routineExerciseId) return re;
+            if (String(re.id) !== activeCell.routineExerciseId) {
+              return re;
+            }
 
             const nextSets: Set[] = re.sets.map((s: Set) => {
-              if (String(s.id) !== activeCell.setId) return s;
+              if (String(s.id) !== activeCell.setId) {
+                return s;
+              }
 
-              if (activeCell.metric === 'weight') return { ...s, weight: next };
-              if (activeCell.metric === 'rep') return { ...s, rep: next };
-              if (activeCell.metric === 'exerciseSec')
+              if (activeCell.metric === 'weight') {
+                return { ...s, weight: next };
+              }
+              if (activeCell.metric === 'rep') {
+                return { ...s, rep: next };
+              }
+              if (activeCell.metric === 'exerciseSec') {
                 return { ...s, exerciseSec: parseDurationToSec(next) };
+              }
 
               return { ...s, restSec: parseDurationToSec(next) };
             });
@@ -214,7 +239,9 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 
   const handleExerciseDeleteConfirm = useCallback(() => {
-    if (!deleteTargetExerciseId) return;
+    if (!deleteTargetExerciseId) {
+      return;
+    }
 
     setRoutine(prev => ({
       ...prev,
@@ -231,7 +258,9 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
   /* -------------------------------------------------------------------------- */
 
   const handleAddExercisesToRoutine = useCallback(() => {
-    if (selectedExerciseIds.length === 0) return;
+    if (selectedExerciseIds.length === 0) {
+      return;
+    }
 
     const selectedExercises = exerciseList.filter(ex =>
       selectedExerciseIds.includes(String(ex.id))
@@ -302,7 +331,9 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
             open={exerciseDeleteModalOpen}
             onOpenChange={(next: boolean) => {
               setExerciseDeleteModalOpen(next);
-              if (!next) setDeleteTargetExerciseId(null);
+              if (!next) {
+                setDeleteTargetExerciseId(null);
+              }
             }}
             title="운동 삭제"
             description="운동을 삭제하시겠습니까?"
@@ -551,3 +582,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+
+// 1. 커스텀 훅으로 비즈니스 로직 단위로 분리
+// 2. 비즈니스 로직 단위로 컴포넌트를 분리
+// 3. 동일한 비즈니스 로직끼리 연결
