@@ -1290,6 +1290,29 @@ PODS:
     - Yoga
   - react-native-safe-area-context (4.14.1):
     - React-Core
+  - react-native-skia (2.4.14):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - React-nativeconfig (0.76.5)
   - React-NativeModulesApple (0.76.5):
     - glog
@@ -1689,7 +1712,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.9.0):
+  - RNSVG (15.15.1):
     - React-Core
   - RNVectorIcons (10.2.0):
     - DoubleConversion
@@ -1757,6 +1780,7 @@ DEPENDENCIES:
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1876,6 +1900,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-skia:
+    :path: "../node_modules/@shopify/react-native-skia"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1985,6 +2011,7 @@ SPEC CHECKSUMS:
   react-native-image-picker: 6390bb8352ac38cad29f4d2569510137db21702e
   react-native-pager-view: 29dec193b1d9a40c534be19161db1b0eec63a0ba
   react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
+  react-native-skia: d779cc8bb6a2ae0604a36b330ab4b94c727a26a2
   React-nativeconfig: f7ab6c152e780b99a8c17448f2d99cf5f69a2311
   React-NativeModulesApple: 9aeb901b9bfcc9235e912445fb3cf4780a99baf4
   React-perflogger: 16e049953d21b37e9871ddf0b02f414e12ff14ba
@@ -2016,7 +2043,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 27a63f2218affdf1a426d56682f9b174904838b3
   RNReanimated: f7c41f0171086c1d0e8b9dc366548b92fd04d533
   RNScreens: 35bb8e81aeccf111baa0ea01a54231390dbbcfd9
-  RNSVG: bb4bfcb8ec723a6f34b074a1b7cd40ee35246fe5
+  RNSVG: d2c24d5cfc0c836289f30055d42d7660c2a24c0e
   RNVectorIcons: 182892e7d1a2f27b52d3c627eca5d2665a22ee28
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: fcc198acd4a55599b3468cfb6ebc526baff5f06e
