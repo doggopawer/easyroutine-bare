@@ -3,8 +3,11 @@ import { View, Text, StyleSheet } from 'react-native';
 import PageLayout from '@/components/PageLayout/PageLayout';
 import LineTab from '@/components/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
+import { useStatisticsScreen } from '@/hooks/useStatisticsScreen';
 
 const StatisticsScreen: React.FC = () => {
+  useStatisticsScreen();
+
   return (
     <PageLayout
       mode="tab"

@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Text, Button, StyleSheet } from 'react-native';
 import PageLayout from '@/components/PageLayout/PageLayout';
-import { AuthStackParamList } from '@/navigation/types';
+import { useLoginScreen } from '@/hooks/useLoginScreen';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+const LoginScreen: React.FC = () => {
+  const { handleLogin } = useLoginScreen();
 
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <PageLayout
       mode="stack"
@@ -14,22 +13,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       showHeader={false}
       main={
         <>
-          {' '}
           <Text style={styles.text}>Login Screen</Text>
-          <Button
-            title="Login (Mock)"
-            onPress={() => {
-              console.log('Login pressed');
-            }}
-          />
+          <Button title="Login (Mock)" onPress={handleLogin} />
         </>
       }
-    ></PageLayout>
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   text: { fontSize: 20, marginBottom: 20 },
 });
 

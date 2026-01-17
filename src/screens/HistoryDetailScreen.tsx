@@ -1,13 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HistoryStackParamList } from '../navigation/types';
 import PageLayout from '@/components/PageLayout/PageLayout';
+import { useHistoryDetailScreen } from '@/hooks/useHistoryDetailScreen';
 
-type Props = NativeStackScreenProps<HistoryStackParamList, 'HistoryDetail'>;
-
-const HistoryDetailScreen: React.FC<Props> = ({ route }) => {
-  const { recordId } = route.params;
+const HistoryDetailScreen: React.FC = () => {
+  const { recordId } = useHistoryDetailScreen();
 
   return (
     <PageLayout

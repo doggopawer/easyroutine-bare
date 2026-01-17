@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React from 'react';
 import { StyleSheet, FlatList, View } from 'react-native';
 import PageLayout from '@/components/PageLayout/PageLayout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -10,264 +10,56 @@ import ERSwipeableAccordion from '@/components/ERSwipeableAccordion/ERSwipeableA
 import ERImageTitleSubtitle from '@/components/ERImageTitleSubTitle/ERImageTitleSubTitle';
 import ERTable from '@/components/ERTable/ERTable';
 
-import ERBottomSheet, { ERBottomSheetRef } from '@/components/ERBottomSheet/ERBottomSheet';
+import ERBottomSheet from '@/components/ERBottomSheet/ERBottomSheet';
 import ERIntegerKeypad from '@/components/ERKeyPad/ERIntegerKeypad';
 import ERDecimalKeypad from '@/components/ERKeyPad/ERDecimalKeypad';
 import ERDurationKeypad from '@/components/ERKeyPad/ERDurationKeypad';
-import { Routine, RoutineExercise, Set, Exercise } from '@/types/model';
-import { VStack } from '@/components/VStack/VStack';
+import { Set } from '@/types/model';
 import ERInput from '@/components/ERInput/ERInput';
 import ERTab from '@/components/ERTab/ERTab';
 import { Category } from '@/types/common';
 import ERCheckbox from '@/components/ERCheckbox/ERCheckbox';
-import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import ERButton from '@/components/ERButton/ERButton';
-import Toast from 'react-native-toast-message';
-import { useRoutineCreateMutation } from '@/hooks/useRoutineCreateMuation';
-
-/* -------------------------------------------------------------------------- */
-/*                                ✅ 타입 정의                                  */
-/* -------------------------------------------------------------------------- */
-
-export type MetricType = 'weight' | 'rep' | 'exerciseSec' | 'restSec';
-export type InputKind = 'decimal' | 'integer' | 'duration';
-
-export const getInputKind = (type: MetricType): InputKind => {
-  if (type === 'weight') return 'decimal';
-  if (type === 'rep') return 'integer';
-  return 'duration';
-};
-
-type ActiveCell = {
-  routineExerciseId: string;
-  setId: string;
-  metric: MetricType;
-  value: string;
-};
+import { useRoutineCreateScreen } from '@/hooks/useRoutineCreateScreen';
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineCreate'>;
 
 const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
-  const { res } = useExerciseListQuery({});
   const { theme } = useTheme();
 
-  const { mutateAsync: createRoutineMutate } = useRoutineCreateMutation();
+  const {
+    // State
+    exerciseList,
+    exerciseDeleteModalOpen,
+    setExerciseDeleteModalOpen,
+    setDeleteTargetExerciseId,
+    category,
+    setCategory,
+    search,
+    setSearch,
+    selectedExerciseIds,
+    setSelectedExerciseIds,
+    activeCell,
+    routineExercises,
 
-  const exerciseList = res?.body ?? [];
+    // Refs
+    keypadRef,
+    libraryRef,
 
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ 삭제 모달 상태                             */
-  /* -------------------------------------------------------------------------- */
+    // Computed
+    inputKind,
 
-  const [exerciseDeleteModalOpen, setExerciseDeleteModalOpen] = useState<boolean>(false);
-  const [deleteTargetExerciseId, setDeleteTargetExerciseId] = useState<string | null>(null);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ 라이브러리 검색/카테고리                     */
-  /* -------------------------------------------------------------------------- */
-
-  const [category, setCategory] = useState<Category>(Category.ALL);
-  const [search, setSearch] = useState<string>('');
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ 선택된 운동 ID 목록 (체크박스)               */
-  /* -------------------------------------------------------------------------- */
-
-  const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ Keypad BottomSheet                         */
-  /* -------------------------------------------------------------------------- */
-
-  const keypadRef = useRef<ERBottomSheetRef>(null);
-  const libraryRef = useRef<ERBottomSheetRef>(null);
-  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
-
-  const inputKind = useMemo<InputKind | null>(() => {
-    if (!activeCell) return null;
-    return getInputKind(activeCell.metric);
-  }, [activeCell]);
-
-  const openKeypad = useCallback((cell: ActiveCell) => {
-    setActiveCell(cell);
-    keypadRef.current?.open();
-  }, []);
-
-  const closeKeypad = useCallback(() => {
-    keypadRef.current?.close();
-    setActiveCell(null);
-  }, []);
-
-  const openLibrary = useCallback(() => {
-    libraryRef.current?.open();
-  }, []);
-
-  const closeLibrary = useCallback(() => {
-    libraryRef.current?.close();
-  }, []);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ Routine 전체 상태 (초기값)                  */
-  /* -------------------------------------------------------------------------- */
-
-  const [routine, setRoutine] = useState<Routine>({
-    id: `routine-${Date.now()}`, // ✅ 임시 ID
-    order: 1,
-    name: '새 루틴',
-    color: '#855CF8',
-    routineExercises: [],
-  });
-
-  const routineExercises = routine.routineExercises;
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ value 표시 helper                          */
-  /* -------------------------------------------------------------------------- */
-
-  const formatDuration = useCallback((sec?: number) => {
-    const s = sec ?? 0;
-    const mm = String(Math.floor(s / 60)).padStart(2, '0');
-    const ss = String(s % 60).padStart(2, '0');
-    return `${mm}:${ss}`;
-  }, []);
-
-  const parseDurationToSec = useCallback((value: string) => {
-    const [mmRaw, ssRaw] = value.split(':');
-
-    const mm = Number(mmRaw);
-    const ss = Number(ssRaw);
-
-    if (Number.isNaN(mm) || Number.isNaN(ss)) return 0;
-    return mm * 60 + ss;
-  }, []);
-
-  const getCellValue = useCallback(
-    (set: Set, metric: MetricType) => {
-      if (metric === 'weight') return String(set.weight ?? '');
-      if (metric === 'rep') return String(set.rep ?? '');
-      if (metric === 'exerciseSec') return formatDuration(set.exerciseSec);
-      return formatDuration(set.restSec);
-    },
-    [formatDuration]
-  );
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ confirm 시 routine 상태 반영                 */
-  /* -------------------------------------------------------------------------- */
-
-  const handleKeyPadConfirm = useCallback(
-    (next: string) => {
-      if (!activeCell) return;
-
-      setRoutine((prev: Routine) => {
-        const nextRoutineExercises: RoutineExercise[] = prev.routineExercises.map(
-          (re: RoutineExercise) => {
-            if (String(re.id) !== activeCell.routineExerciseId) return re;
-
-            const nextSets: Set[] = re.sets.map((s: Set) => {
-              if (String(s.id) !== activeCell.setId) return s;
-
-              if (activeCell.metric === 'weight') return { ...s, weight: next };
-              if (activeCell.metric === 'rep') return { ...s, rep: next };
-              if (activeCell.metric === 'exerciseSec')
-                return { ...s, exerciseSec: parseDurationToSec(next) };
-
-              return { ...s, restSec: parseDurationToSec(next) };
-            });
-
-            return { ...re, sets: nextSets };
-          }
-        );
-
-        return {
-          ...prev,
-          routineExercises: nextRoutineExercises,
-        };
-      });
-
-      closeKeypad();
-    },
-    [activeCell, closeKeypad, parseDurationToSec]
-  );
-
-  const handleExerciseDeleteConfirm = useCallback(() => {
-    if (!deleteTargetExerciseId) return;
-
-    setRoutine(prev => ({
-      ...prev,
-      routineExercises: prev.routineExercises.filter(
-        re => String(re.id) !== deleteTargetExerciseId
-      ),
-    }));
-
-    setDeleteTargetExerciseId(null);
-  }, [deleteTargetExerciseId]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ 운동 추가하기 버튼 handler                   */
-  /* -------------------------------------------------------------------------- */
-
-  const handleAddExercisesToRoutine = useCallback(() => {
-    if (selectedExerciseIds.length === 0) return;
-
-    const selectedExercises = exerciseList.filter(ex =>
-      selectedExerciseIds.includes(String(ex.id))
-    );
-
-    setRoutine(prev => {
-      const nextOrderStart = prev.routineExercises.length + 1;
-
-      const nextRoutineExercises: RoutineExercise[] = selectedExercises.map((exercise, idx) => ({
-        id: `routine-ex-${Date.now()}-${idx}`,
-        order: nextOrderStart + idx,
-        exercise: exercise as Exercise,
-        sets: [
-          {
-            id: `set-${Date.now()}-${idx}-1`,
-            order: 1,
-            weight: 0,
-            rep: 0,
-            exerciseSec: 0,
-            restSec: 60,
-          },
-        ],
-      }));
-
-      return {
-        ...prev,
-        routineExercises: [...prev.routineExercises, ...nextRoutineExercises],
-      };
-    });
-
-    setSelectedExerciseIds([]);
-    closeLibrary();
-  }, [selectedExerciseIds, exerciseList, closeLibrary]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                ✅ 루틴 저장 handler (Create)                 */
-  /* -------------------------------------------------------------------------- */
-
-  const handleCreateRoutine = useCallback(async () => {
-    try {
-      await createRoutineMutate(routine);
-
-      Toast.show({
-        type: 'success',
-        text1: '생성 완료',
-        text2: '루틴이 생성되었습니다.',
-      });
-
-      navigation.goBack();
-    } catch (e) {
-      Toast.show({
-        type: 'error',
-        text1: '생성 실패',
-        text2: '잠시 후 다시 시도해주세요.',
-      });
-
-      console.log(e);
-    }
-  }, [createRoutineMutate, routine, navigation]);
+    // Handlers
+    openKeypad,
+    closeKeypad,
+    openLibrary,
+    closeLibrary,
+    getCellValue,
+    handleKeyPadConfirm,
+    handleExerciseDeleteConfirm,
+    handleAddExercisesToRoutine,
+    handleCreateRoutine,
+  } = useRoutineCreateScreen(navigation);
 
   return (
     <PageLayout
@@ -280,7 +72,9 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
             open={exerciseDeleteModalOpen}
             onOpenChange={(next: boolean) => {
               setExerciseDeleteModalOpen(next);
-              if (!next) setDeleteTargetExerciseId(null);
+              if (!next) {
+                setDeleteTargetExerciseId(null);
+              }
             }}
             title="운동 삭제"
             description="운동을 삭제하시겠습니까?"
@@ -323,16 +117,16 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
           {/* ------------------------------------------------------------------ */}
 
           <ERBottomSheet ref={libraryRef} onClose={closeLibrary}>
-            <View style={{ paddingVertical: 16 }}>
+            <View style={styles.paddingVertical16}>
               <ERInput
                 value={search}
                 onChangeText={setSearch}
                 placeholder="검색"
-                containerStyle={{ borderRadius: 999 }}
-                inputStyle={{ fontWeight: '700' }}
+                containerStyle={styles.searchInputContainer}
+                inputStyle={styles.fontWeight700}
               />
 
-              <View style={{ height: 16 }} />
+              <View style={styles.spacer16} />
 
               <ERTab
                 variant="chip"
@@ -351,7 +145,7 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
             </View>
 
             {/* ✅ 스크롤 리스트 영역 */}
-            <View style={{ height: 300 }}>
+            <View style={styles.exerciseListContainer}>
               <ERCheckbox
                 variant="image-text"
                 defaultValue={[]}
@@ -374,7 +168,7 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
             </View>
 
             {/* ✅ 버튼 영역 */}
-            <View style={{ padding: 16 }}>
+            <View style={styles.padding16}>
               <ERButton variant="solid" onPress={handleAddExercisesToRoutine}>
                 운동 추가
               </ERButton>
@@ -511,7 +305,7 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
                 }
               />
             )}
-            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+            ItemSeparatorComponent={() => <View style={styles.spacer10} />}
           />
 
           <ERButton variant="solid" onPress={handleCreateRoutine}>
@@ -526,7 +320,25 @@ const RoutineCreateScreen: React.FC<Props> = ({ navigation }) => {
 export default RoutineCreateScreen;
 
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
+  paddingVertical16: {
+    paddingVertical: 16,
+  },
+  searchInputContainer: {
+    borderRadius: 999,
+  },
+  fontWeight700: {
+    fontWeight: '700',
+  },
+  spacer16: {
+    height: 16,
+  },
+  spacer10: {
+    height: 10,
+  },
+  exerciseListContainer: {
+    height: 300,
+  },
+  padding16: {
+    padding: 16,
   },
 });

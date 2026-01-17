@@ -1,5 +1,4 @@
 import React from 'react';
-import { Alert } from 'react-native';
 import PageLayout from '@/components/PageLayout/PageLayout';
 
 import ERTab from '@/components/ERTab/ERTab';
@@ -8,59 +7,62 @@ import { VStack } from '@/components/VStack/VStack';
 import BasicToggle from '@/components/BasicToggle/BasicToggle';
 import CircleButton from '@/components/CircleButton/CircleButton';
 import ProfileBox from '@/components/ProfileBox/ProfileBox';
+import { useMyPageScreen } from '@/hooks/useMyPageScreen';
 
 const MyPageScreen: React.FC = () => {
+  const { handleToggleClick, handleCircleButtonClick, handleTabItemPress } = useMyPageScreen();
+
   return (
     <PageLayout
       mode="tab"
       activeTab="MyPage"
-      overlay={({ scrollY }) => (
+      overlay={() => (
         <></>
         // <FloatingCircleButton scrollY={scrollY} onButtonClick={() => Alert.alert('FAB', 'click')} />
       )}
       main={
         <VStack>
-          <BasicToggle onToggleClick={() => {}} defaultValue={false} />
+          <BasicToggle onToggleClick={handleToggleClick} defaultValue={false} />
 
-          <CircleButton width={40} height={40} onCircleButtonClick={() => console.log('click')}>
+          <CircleButton width={40} height={40} onCircleButtonClick={handleCircleButtonClick}>
             d
           </CircleButton>
 
           <ERTab variant="color" defaultValue="VIOLET">
-            <ERTab.Item value="VIOLET" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="ORANGE" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="GREEN" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="BLUE" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="PINK" onTabItemPress={v => Alert.alert('click', v)} />
+            <ERTab.Item value="VIOLET" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="ORANGE" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="GREEN" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="BLUE" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="PINK" onTabItemPress={handleTabItemPress} />
           </ERTab>
 
           <ERTab variant="chip" defaultValue="ALL">
-            <ERTab.Item value="ALL" label="전체" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="A" label="A" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="B" label="B" onTabItemPress={v => Alert.alert('click', v)} />
-            <ERTab.Item value="C" label="C" onTabItemPress={v => Alert.alert('click', v)} isLast />
+            <ERTab.Item value="ALL" label="전체" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="A" label="A" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="B" label="B" onTabItemPress={handleTabItemPress} />
+            <ERTab.Item value="C" label="C" onTabItemPress={handleTabItemPress} isLast />
           </ERTab>
 
           <ERTab variant="line" defaultValue="A">
-            <ERTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="A" onTabItemPress={handleTabItemPress}>
               A
             </ERTab.Item>
-            <ERTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="B" onTabItemPress={handleTabItemPress}>
               B
             </ERTab.Item>
-            <ERTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="C" onTabItemPress={handleTabItemPress}>
               C
             </ERTab.Item>
           </ERTab>
 
           <ERTab variant="icon" defaultValue="A">
-            <ERTab.Item value="A" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="A" onTabItemPress={handleTabItemPress}>
               A
             </ERTab.Item>
-            <ERTab.Item value="B" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="B" onTabItemPress={handleTabItemPress}>
               B
             </ERTab.Item>
-            <ERTab.Item value="C" onTabItemPress={v => Alert.alert('click', v)}>
+            <ERTab.Item value="C" onTabItemPress={handleTabItemPress}>
               D
             </ERTab.Item>
           </ERTab>
