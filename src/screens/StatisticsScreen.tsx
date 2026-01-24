@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
-import LineTab from '@/components/LineTab/LineTab';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
+import LineTab from '@/components/ui/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
 import { useStatisticsScreen } from '@/hooks/useStatisticsScreen';
 

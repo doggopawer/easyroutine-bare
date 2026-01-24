@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 import { Routine, RoutineExercise, Set, RoutineHistory, Exercise } from '@/types/model';
 import { Category } from '@/types/common';
-import { ERBottomSheetRef } from '@/components/ERBottomSheet/ERBottomSheet';
+import { ERBottomSheetRef } from '@/components/ui/ERBottomSheet/ERBottomSheet';
 import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import { useRoutineHistoryCreateMutation } from '@/hooks/useRoutineHistoryCreateMutation';
 import Toast from 'react-native-toast-message';

@@ -1,21 +1,22 @@
-import React, { useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
-import ERInput from '@/components/ERInput/ERInput';
-import ERTab from '@/components/ERTab/ERTab';
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
+import ERInput from '@/components/ui/ERInput/ERInput';
+import ERTab from '@/components/ui/ERTab/ERTab';
 import { Category } from '@/types/common';
-import { VStack } from '@/components/VStack/VStack';
+import { VStack } from '@/components/ui/VStack/VStack';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 
-import ERBottomSheet from '@/components/ERBottomSheet/ERBottomSheet';
-import ERButton from '@/components/ERButton/ERButton';
-import ERLabel from '@/components/ERLabel/ERLabel';
-import ERImageUploader from '@/components/ERImageUploader/ERImageUploader';
-import { HStack } from '@/components/HStack/HStack';
-import ERCheckbox from '@/components/ERCheckbox/ERCheckbox';
-import { Exercise } from '@/types/model';
-import ERFloatingActionButton from '@/components/ERFloatingActionButton/ERFloatingActionButton';
+import ERBottomSheet from '@/components/ui/ERBottomSheet/ERBottomSheet';
+import ERButton from '@/components/ui/ERButton/ERButton';
+import ERLabel from '@/components/ui/ERLabel/ERLabel';
+import ERImageUploader from '@/components/ui/ERImageUploader/ERImageUploader';
+import { HStack } from '@/components/ui/HStack/HStack';
+import ERCheckbox from '@/components/ui/ERCheckbox/ERCheckbox';
+import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
 import { useLibraryScreen } from '@/hooks/useLibraryScreen';
+import ERFilter from '@/components/ui/ERFilter/ERFilter';
+import { LibraryExerciseList } from '@/components/domain/Library/LibraryExerciseList';
 
 const LibraryScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -57,13 +58,6 @@ const LibraryScreen: React.FC = () => {
     handleSelectExercise,
   } = useLibraryScreen();
 
-  const renderExerciseItem = useCallback(
-    ({ item }: { item: Exercise }) => (
-      <ERTab.Item value={String(item.id)} title={item.name} imageSrc={item.image ?? undefined} />
-    ),
-    []
-  );
-
   return (
     <PageLayout
       mode="tab"
@@ -71,48 +65,28 @@ const LibraryScreen: React.FC = () => {
       main={
         <View style={styles.flex1}>
           <VStack style={styles.flex1}>
-            <View>
-              <ERInput
-                value={search}
-                onChangeText={handleChangeSearch}
-                placeholder="검색"
-                containerStyle={styles.searchInputContainer}
-                inputStyle={styles.fontWeight700}
-              />
+            <ERFilter
+              value={search}
+              onChangeText={handleChangeSearch}
+              placeholder="검색"
+              filterItems={[
+                { label: '전체', value: Category.ALL },
+                { label: '가슴', value: Category.CHEST },
+                { label: '등', value: Category.BACK },
+                { label: '어깨', value: Category.SHOULDER },
+                { label: '하체', value: Category.LEG },
+                { label: '팔', value: Category.ARM },
+                { label: '기타', value: Category.ETC },
+              ]}
+              selectedFilter={category}
+              onFilterChange={v => handleChangeCategory(v as Category)}
+            />
 
-              <View style={styles.spacer16} />
-
-              <ERTab
-                variant="chip"
-                defaultValue={Category.ALL}
-                value={category}
-                onChange={handleChangeCategory}
-              >
-                <ERTab.Item value={Category.ALL}>전체</ERTab.Item>
-                <ERTab.Item value={Category.CHEST}>가슴</ERTab.Item>
-                <ERTab.Item value={Category.BACK}>등</ERTab.Item>
-                <ERTab.Item value={Category.SHOULDER}>어깨</ERTab.Item>
-                <ERTab.Item value={Category.LEG}>하체</ERTab.Item>
-                <ERTab.Item value={Category.ARM}>팔</ERTab.Item>
-                <ERTab.Item value={Category.ETC}>기타</ERTab.Item>
-              </ERTab>
-            </View>
-
-            <View style={styles.flex1}>
-              <ERTab
-                variant="image-text-arrow"
-                defaultValue={''}
-                value={selectedExerciseId}
-                onChange={handleSelectExercise}
-              >
-                <FlatList
-                  data={exerciseList}
-                  keyExtractor={item => String(item.id)}
-                  showsVerticalScrollIndicator={false}
-                  renderItem={renderExerciseItem}
-                />
-              </ERTab>
-            </View>
+            <LibraryExerciseList
+              data={exerciseList}
+              selectedId={selectedExerciseId}
+              onSelect={handleSelectExercise}
+            />
           </VStack>
         </View>
       }
@@ -299,9 +273,6 @@ const styles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
-  searchInputContainer: {
-    borderRadius: 999,
-  },
   fontWeight700: {
     fontWeight: '700',
   },
@@ -337,9 +308,6 @@ const styles = StyleSheet.create({
   },
   spacer14: {
     height: 14,
-  },
-  spacer16: {
-    height: 16,
   },
   spacer18: {
     height: 18,

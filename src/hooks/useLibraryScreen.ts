@@ -4,7 +4,7 @@ import { useExerciseCreateMutation } from '@/hooks/useExerciseCreateMutation';
 import { useExerciseUpdateMutation } from '@/hooks/useExerciseUpdateMutation';
 import { Category } from '@/types/common';
 import { Exercise } from '@/types/model';
-import { ERBottomSheetRef } from '@/components/ERBottomSheet/ERBottomSheet';
+import { ERBottomSheetRef } from '@/components/ui/ERBottomSheet/ERBottomSheet';
 import Toast from 'react-native-toast-message';
 
 export type ExerciseType = 'WEIGHT' | 'COUNT' | 'TIME';

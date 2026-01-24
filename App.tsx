@@ -7,11 +7,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
-import Toast from 'react-native-toast-message';
-import ERToast from '@/components/ERToast/ERToast'; // ✅✅✅ 추가
+import Toast from 'react-native-toast-message'; // ✅✅✅ 추가
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider/ThemeProvider';
 import AppNavigator from './src/navigation/AppNavigator';
+import ERToast from '@/components/ui/ERToast/ERToast';
 
 // screens 최적화(앱 시작 1회)
 enableScreens();

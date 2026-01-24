@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
-import LineTab from '@/components/LineTab/LineTab';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
+import LineTab from '@/components/ui/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
-import ERGraph from '@/components/ERGraph/ERGraph';
+import ERGraph from '@/components/ui/ERGraph/ERGraph';
 import { useCalendarScreen } from '@/hooks/useCalendarScreen';
 
 const CalendarScreen: React.FC = () => {

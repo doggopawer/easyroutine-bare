@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
 import { useHistoryDetailScreen } from '@/hooks/useHistoryDetailScreen';
 
 const HistoryDetailScreen: React.FC = () => {

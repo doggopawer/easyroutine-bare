@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HistoryStackParamList } from '@/navigation/types';
-import { Dot } from '@/components/ERCalendar/ERCalendar';
+import { Dot } from '@/components/ui/ERCalendar/ERCalendar';
 
 export const useCalendarScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<HistoryStackParamList>>();

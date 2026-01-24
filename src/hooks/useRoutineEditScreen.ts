@@ -3,7 +3,7 @@ import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import { useRoutineUpdateMutation } from '@/hooks/useRoutineUpdateMutation';
 import { Routine, RoutineExercise, Set } from '@/types/model';
 import { Category } from '@/types/common';
-import { ERBottomSheetRef } from '@/components/ERBottomSheet/ERBottomSheet';
+import { ERBottomSheetRef } from '@/components/ui/ERBottomSheet/ERBottomSheet';
 import Toast from 'react-native-toast-message';
 
 export type MetricType = 'weight' | 'rep' | 'exerciseSec' | 'restSec';

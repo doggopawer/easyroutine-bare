@@ -1,28 +1,28 @@
 import React, { useCallback } from 'react';
 import { FlatList, View, Pressable, Text, StyleSheet, Modal } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
 import { RoutineExercise, Set } from '@/types/model';
-import { VStack } from '@/components/VStack/VStack';
-import { HStack } from '@/components/HStack/HStack';
+import { VStack } from '@/components/ui/VStack/VStack';
+import { HStack } from '@/components/ui/HStack/HStack';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
-import ERSwipeableAccordion from '@/components/ERSwipeableAccordion/ERSwipeableAccordion';
-import ERImageTitleSubtitle from '@/components/ERImageTitleSubTitle/ERImageTitleSubTitle';
-import ERTable from '@/components/ERTable/ERTable';
-import ERConfirmModal from '@/components/ERConfirmModal/ERConfirmModal';
-import ERFloatingActionButton from '@/components/ERFloatingActionButton/ERFloatingActionButton';
+import ERSwipeableAccordion from '@/components/ui/ERSwipeableAccordion/ERSwipeableAccordion';
+import ERImageTitleSubtitle from '@/components/ui/ERImageTitleSubTitle/ERImageTitleSubTitle';
+import ERTable from '@/components/ui/ERTable/ERTable';
+import ERConfirmModal from '@/components/ui/ERConfirmModal/ERConfirmModal';
+import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
 
-import ERBottomSheet from '@/components/ERBottomSheet/ERBottomSheet';
-import ERInput from '@/components/ERInput/ERInput';
-import ERTab from '@/components/ERTab/ERTab';
-import ERCheckbox from '@/components/ERCheckbox/ERCheckbox';
-import ERButton from '@/components/ERButton/ERButton';
+import ERBottomSheet from '@/components/ui/ERBottomSheet/ERBottomSheet';
+import ERInput from '@/components/ui/ERInput/ERInput';
+import ERTab from '@/components/ui/ERTab/ERTab';
+import ERCheckbox from '@/components/ui/ERCheckbox/ERCheckbox';
+import ERButton from '@/components/ui/ERButton/ERButton';
 import { Category } from '@/types/common';
 
-import ERIntegerKeypad from '@/components/ERKeyPad/ERIntegerKeypad';
-import ERDecimalKeypad from '@/components/ERKeyPad/ERDecimalKeypad';
-import ERDurationKeypad from '@/components/ERKeyPad/ERDurationKeypad';
+import ERIntegerKeypad from '@/components/ui/ERKeyPad/ERIntegerKeypad';
+import ERDecimalKeypad from '@/components/ui/ERKeyPad/ERDecimalKeypad';
+import ERDurationKeypad from '@/components/ui/ERKeyPad/ERDurationKeypad';
 import { useRoutineProgressScreen } from '@/hooks/useRoutineProgressScreen';
 
 /* -------------------------------------------------------------------------- */

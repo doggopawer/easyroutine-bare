@@ -1,12 +1,12 @@
 import React from 'react';
-import PageLayout from '@/components/PageLayout/PageLayout';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
 
-import ERTab from '@/components/ERTab/ERTab';
+import ERTab from '@/components/ui/ERTab/ERTab';
 
-import { VStack } from '@/components/VStack/VStack';
-import BasicToggle from '@/components/BasicToggle/BasicToggle';
-import CircleButton from '@/components/CircleButton/CircleButton';
-import ProfileBox from '@/components/ProfileBox/ProfileBox';
+import { VStack } from '@/components/ui/VStack/VStack';
+import BasicToggle from '@/components/ui/BasicToggle/BasicToggle';
+import CircleButton from '@/components/ui/CircleButton/CircleButton';
+import ProfileBox from '@/components/ui/ProfileBox/ProfileBox';
 import { useMyPageScreen } from '@/hooks/useMyPageScreen';
 
 const MyPageScreen: React.FC = () => {

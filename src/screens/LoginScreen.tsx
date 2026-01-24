@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Button, StyleSheet } from 'react-native';
-import PageLayout from '@/components/PageLayout/PageLayout';
+import PageLayout from '@/components/ui/PageLayout/PageLayout';
 import { useLoginScreen } from '@/hooks/useLoginScreen';
 
 const LoginScreen: React.FC = () => {
