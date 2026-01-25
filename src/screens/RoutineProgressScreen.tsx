@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FlatList, View, Pressable, Text, StyleSheet, Modal } from 'react-native';
+import { FlatList, View, Pressable, Text, StyleSheet } from 'react-native';
 import PageLayout from '@/components/ui/PageLayout/PageLayout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
@@ -10,90 +10,22 @@ import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 import ERSwipeableAccordion from '@/components/ui/ERSwipeableAccordion/ERSwipeableAccordion';
 import ERImageTitleSubtitle from '@/components/ui/ERImageTitleSubTitle/ERImageTitleSubTitle';
 import ERTable from '@/components/ui/ERTable/ERTable';
-import ERConfirmModal from '@/components/ui/ERConfirmModal/ERConfirmModal';
 import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
-
-import ERBottomSheet from '@/components/ui/ERBottomSheet/ERBottomSheet';
-import ERInput from '@/components/ui/ERInput/ERInput';
-import ERTab from '@/components/ui/ERTab/ERTab';
-import ERCheckbox from '@/components/ui/ERCheckbox/ERCheckbox';
 import ERButton from '@/components/ui/ERButton/ERButton';
-import { Category } from '@/types/common';
-
-import ERIntegerKeypad from '@/components/ui/ERKeyPad/ERIntegerKeypad';
-import ERDecimalKeypad from '@/components/ui/ERKeyPad/ERDecimalKeypad';
-import ERDurationKeypad from '@/components/ui/ERKeyPad/ERDurationKeypad';
 import { useRoutineProgressScreen } from '@/hooks/useRoutineProgressScreen';
+import SetUpdateBottomSheet from '@/components/domain/SetUpdateBottomSheet/SetUpdateBottomSheet';
+import { useSetUpdateBottomSheet } from '@/hooks/useSetUpdateBottomSheet';
+import RoutineExerciseAddBottomSheet from '@/components/domain/RoutineExerciseAddBottomSheet/RoutineExerciseAddBottomSheet';
+import { useRoutineExerciseAddBottomSheet } from '@/hooks/useRoutineExerciseAddBottomSheet';
+import RoutineRestTimerModal from '@/components/domain/RoutineRestTimerModal/RoutineRestTimerModal';
+import RoutineFinishConfirmModal from '@/components/domain/RoutineFinishConfirmModal/RoutineFinishConfirmModal';
+import RoutineFinishWarningModal from '@/components/domain/RoutineFinishWarningModal/RoutineFinishWarningModal';
 
 /* -------------------------------------------------------------------------- */
 /* ✅ 타입 정의                                                                */
 /* -------------------------------------------------------------------------- */
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineProgress'>;
-
-/* -------------------------------------------------------------------------- */
-/* ✅ Rest Timer Modal                                                        */
-/* -------------------------------------------------------------------------- */
-
-type RestTimerModalProps = {
-  open: boolean;
-  remain: number;
-  onCloseTemp: () => void;
-  onSkip: () => void;
-  onFinish: () => void;
-  formatDuration: (sec?: number) => string;
-};
-
-const RestTimerModal: React.FC<RestTimerModalProps> = ({
-  open,
-  remain,
-  onCloseTemp,
-  onSkip,
-  onFinish,
-  formatDuration,
-}) => {
-  const { theme } = useTheme();
-
-  const timerColor = remain <= 10 ? theme.colors.red1 : theme.colors.primary1;
-
-  return (
-    <Modal visible={open} transparent animationType="fade">
-      <View style={styles.modalBackdrop}>
-        <View style={[styles.modalCard, { backgroundColor: theme.colors.white1 }]}>
-          <Text style={[styles.modalTitle, { color: theme.colors.text }]}>휴식</Text>
-
-          <Text style={[styles.timerText, { color: timerColor }]}>{formatDuration(remain)}</Text>
-
-          <View style={styles.spacer16} />
-
-          <Pressable
-            onPress={onCloseTemp}
-            style={({ pressed }) => [
-              styles.modalButton,
-              { backgroundColor: theme.colors.gray6 },
-              pressed && { opacity: 0.85 },
-            ]}
-          >
-            <Text style={[styles.modalButtonText, { color: theme.colors.text }]}>잠시 닫기</Text>
-          </Pressable>
-
-          <View style={styles.spacer10} />
-
-          <Pressable
-            onPress={onSkip}
-            style={({ pressed }) => [
-              styles.modalButton,
-              { backgroundColor: theme.colors.primary1 },
-              pressed && { opacity: 0.85 },
-            ]}
-          >
-            <Text style={[styles.modalButtonText, { color: theme.colors.white1 }]}>스킵</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>
-  );
-};
 
 const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
   const { theme } = useTheme();
@@ -102,14 +34,6 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
   const {
     // State
     routine,
-    setRoutine,
-    category,
-    setCategory,
-    search,
-    setSearch,
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    activeCell,
     activeSet,
     doneMap,
     restTimerOpen,
@@ -121,13 +45,6 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
     routineFinishWarningOpen,
     setRoutineFinishWarningOpen,
     exerciseList,
-
-    // Refs
-    libraryRef,
-    keypadRef,
-
-    // Computed
-    inputKind,
     totalSetCount,
     doneSetCount,
     isAllDone,
@@ -137,22 +54,29 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
     isDoneSet,
     getCellValue,
     formatDuration,
-    parseDurationToSec,
 
     // Handlers
-    openLibrary,
-    closeLibrary,
-    openKeypad,
-    closeKeypad,
+    handleUpdateRoutineSetValue,
     handleRestTempClose,
     handleRestSkip,
-    handleRestFinish,
     handleSetDone,
     handleAddSet,
     handleDeleteSet,
     handleAddExercisesToRoutine,
     handleConfirmRoutineFinish,
   } = useRoutineProgressScreen(initialRoutine, navigation);
+
+  const { activeCell, openSetUpdateBottomSheet, bottomSheetProps: setUpdateBottomSheetProps } =
+    useSetUpdateBottomSheet({
+      onConfirmUpdate: handleUpdateRoutineSetValue,
+    });
+
+  const {
+    openRoutineExerciseAddBottomSheet,
+    bottomSheetProps: routineExerciseAddBottomSheetProps,
+  } = useRoutineExerciseAddBottomSheet({
+    onConfirmAdd: handleAddExercisesToRoutine,
+  });
 
   const renderRoutineExercise = useCallback(
     ({ item }: { item: RoutineExercise }) => {
@@ -221,7 +145,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
                                 activeCell?.metric === 'weight'
                               }
                               onPress={() =>
-                                openKeypad({
+                                openSetUpdateBottomSheet({
                                   routineExerciseId,
                                   setId,
                                   metric: 'weight',
@@ -244,7 +168,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
                                 activeCell?.metric === 'rep'
                               }
                               onPress={() =>
-                                openKeypad({
+                                openSetUpdateBottomSheet({
                                   routineExerciseId,
                                   setId,
                                   metric: 'rep',
@@ -267,7 +191,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
                                 activeCell?.metric === 'exerciseSec'
                               }
                               onPress={() =>
-                                openKeypad({
+                                openSetUpdateBottomSheet({
                                   routineExerciseId,
                                   setId,
                                   metric: 'exerciseSec',
@@ -290,7 +214,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
                                 activeCell?.metric === 'restSec'
                               }
                               onPress={() =>
-                                openKeypad({
+                                openSetUpdateBottomSheet({
                                   routineExerciseId,
                                   setId,
                                   metric: 'restSec',
@@ -353,7 +277,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
       handleDeleteSet,
       activeCell,
       getCellValue,
-      openKeypad,
+      openSetUpdateBottomSheet,
       restRunning,
       isDoneSet,
       formatDuration,
@@ -366,221 +290,36 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
       title="루틴 진행"
       overlay={({ scrollY }) => (
         <>
-          <ERFloatingActionButton scrollY={scrollY} onButtonClick={openLibrary} />
-
-          <RestTimerModal
+          <RoutineRestTimerModal
             open={restTimerOpen}
             remain={restRemain}
             onCloseTemp={handleRestTempClose}
             onSkip={handleRestSkip}
-            onFinish={handleRestFinish}
             formatDuration={formatDuration}
           />
 
-          <ERBottomSheet ref={libraryRef} onClose={closeLibrary}>
-            <View style={styles.paddingVertical16}>
-              <ERInput
-                value={search}
-                onChangeText={setSearch}
-                placeholder="검색"
-                containerStyle={styles.searchInputContainer}
-                inputStyle={styles.fontWeight700}
-              />
+          <ERFloatingActionButton
+            scrollY={scrollY}
+            onButtonClick={openRoutineExerciseAddBottomSheet}
+          />
 
-              <View style={styles.spacer16} />
+          <RoutineExerciseAddBottomSheet
+            {...routineExerciseAddBottomSheetProps}
+            exerciseList={exerciseList}
+          />
 
-              <ERTab
-                variant="chip"
-                defaultValue={Category.ALL}
-                value={category}
-                onChange={(v: string) => setCategory(v as Category)}
-              >
-                <ERTab.Item value={Category.ALL}>전체</ERTab.Item>
-                <ERTab.Item value={Category.CHEST}>가슴</ERTab.Item>
-                <ERTab.Item value={Category.BACK}>등</ERTab.Item>
-                <ERTab.Item value={Category.SHOULDER}>어깨</ERTab.Item>
-                <ERTab.Item value={Category.LEG}>하체</ERTab.Item>
-                <ERTab.Item value={Category.ARM}>팔</ERTab.Item>
-                <ERTab.Item value={Category.ETC}>기타</ERTab.Item>
-              </ERTab>
-            </View>
+          <SetUpdateBottomSheet {...setUpdateBottomSheetProps} />
 
-            {/* ✅ 스크롤 리스트 영역 */}
-            <View style={styles.exerciseListContainer}>
-              <ERCheckbox
-                variant="image-text"
-                defaultValue={[]}
-                value={selectedExerciseIds}
-                onChange={setSelectedExerciseIds}
-              >
-                <FlatList
-                  data={exerciseList}
-                  keyExtractor={item => String(item.id)}
-                  showsVerticalScrollIndicator={false}
-                  renderItem={({ item }) => (
-                    <ERCheckbox.Item
-                      value={String(item.id)}
-                      title={item.name}
-                      imageSrc={item.image ?? undefined}
-                    />
-                  )}
-                />
-              </ERCheckbox>
-            </View>
-
-            {/* ✅ 버튼 영역 */}
-            <View style={styles.padding16}>
-              <ERButton variant="solid" onPress={handleAddExercisesToRoutine}>
-                운동 추가
-              </ERButton>
-            </View>
-          </ERBottomSheet>
-          <ERBottomSheet ref={keypadRef} snapPoints={['45%']} onClose={closeKeypad}>
-            {inputKind === 'integer' && (
-              <ERIntegerKeypad
-                defaultValue={activeCell?.value ?? ''}
-                onCancel={closeKeypad}
-                onConfirm={next => {
-                  if (!activeCell) {
-                    return;
-                  }
-
-                  setRoutine(prev => {
-                    const nextRoutineExercises = prev.routineExercises.map(re => {
-                      if (String(re.id) !== activeCell.routineExerciseId) {
-                        return re;
-                      }
-
-                      const nextSets = re.sets.map(s => {
-                        if (String(s.id) !== activeCell.setId) {
-                          return s;
-                        }
-
-                        if (activeCell.metric === 'weight') {
-                          return { ...s, weight: next };
-                        }
-                        if (activeCell.metric === 'rep') {
-                          return { ...s, rep: next };
-                        }
-                        if (activeCell.metric === 'exerciseSec') {
-                          return { ...s, exerciseSec: parseDurationToSec(next) };
-                        }
-
-                        return { ...s, restSec: parseDurationToSec(next) };
-                      });
-
-                      return { ...re, sets: nextSets };
-                    });
-
-                    return { ...prev, routineExercises: nextRoutineExercises };
-                  });
-
-                  closeKeypad();
-                }}
-              />
-            )}
-
-            {inputKind === 'decimal' && (
-              <ERDecimalKeypad
-                defaultValue={activeCell?.value ?? ''}
-                onCancel={closeKeypad}
-                onConfirm={next => {
-                  if (!activeCell) {
-                    return;
-                  }
-
-                  setRoutine(prev => {
-                    const nextRoutineExercises = prev.routineExercises.map(re => {
-                      if (String(re.id) !== activeCell.routineExerciseId) {
-                        return re;
-                      }
-
-                      const nextSets = re.sets.map(s => {
-                        if (String(s.id) !== activeCell.setId) {
-                          return s;
-                        }
-
-                        if (activeCell.metric === 'weight') {
-                          return { ...s, weight: next };
-                        }
-                        if (activeCell.metric === 'rep') {
-                          return { ...s, rep: next };
-                        }
-                        if (activeCell.metric === 'exerciseSec') {
-                          return { ...s, exerciseSec: parseDurationToSec(next) };
-                        }
-
-                        return { ...s, restSec: parseDurationToSec(next) };
-                      });
-
-                      return { ...re, sets: nextSets };
-                    });
-
-                    return { ...prev, routineExercises: nextRoutineExercises };
-                  });
-
-                  closeKeypad();
-                }}
-              />
-            )}
-
-            {inputKind === 'duration' && (
-              <ERDurationKeypad
-                defaultValue={activeCell?.value ?? ''}
-                onCancel={closeKeypad}
-                onConfirm={next => {
-                  if (!activeCell) {
-                    return;
-                  }
-
-                  setRoutine(prev => {
-                    const nextRoutineExercises = prev.routineExercises.map(re => {
-                      if (String(re.id) !== activeCell.routineExerciseId) {
-                        return re;
-                      }
-
-                      const nextSets = re.sets.map(s => {
-                        if (String(s.id) !== activeCell.setId) {
-                          return s;
-                        }
-
-                        if (activeCell.metric === 'exerciseSec') {
-                          return { ...s, exerciseSec: parseDurationToSec(next) };
-                        }
-
-                        return { ...s, restSec: parseDurationToSec(next) };
-                      });
-
-                      return { ...re, sets: nextSets };
-                    });
-
-                    return { ...prev, routineExercises: nextRoutineExercises };
-                  });
-
-                  closeKeypad();
-                }}
-              />
-            )}
-          </ERBottomSheet>
-
-          <ERConfirmModal
+          <RoutineFinishConfirmModal
             open={routineFinishConfirmOpen}
             onOpenChange={setRoutineFinishConfirmOpen}
-            title="루틴 완료"
-            description="모든 세트를 완료했습니다. 루틴을 저장하시겠습니까?"
-            cancelText="취소"
-            confirmText="저장"
             onConfirm={handleConfirmRoutineFinish}
             accentColor={theme.colors.primary1}
           />
 
-          <ERConfirmModal
+          <RoutineFinishWarningModal
             open={routineFinishWarningOpen}
             onOpenChange={setRoutineFinishWarningOpen}
-            title="운동 미완료"
-            description="아직 완료하지 않은 세트가 있습니다. 그래도 루틴을 종료하시겠습니까?"
-            cancelText="취소"
-            confirmText="종료"
             onConfirm={handleConfirmRoutineFinish}
             accentColor={theme.colors.red1}
           />
@@ -649,21 +388,6 @@ const styles = StyleSheet.create({
   width100: {
     width: '100%',
   },
-  paddingVertical16: {
-    paddingVertical: 16,
-  },
-  padding16: {
-    padding: 16,
-  },
-  searchInputContainer: {
-    borderRadius: 999,
-  },
-  fontWeight700: {
-    fontWeight: '700',
-  },
-  exerciseListContainer: {
-    height: 300,
-  },
   spacer10: {
     height: 10,
   },
@@ -697,45 +421,6 @@ const styles = StyleSheet.create({
 
   subButtonText: {
     fontSize: 14,
-    fontWeight: '700',
-  },
-
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-
-  modalCard: {
-    width: '100%',
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-  },
-
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-  },
-
-  timerText: {
-    marginTop: 16,
-    fontSize: 42,
-    fontWeight: '900',
-  },
-
-  modalButton: {
-    width: '100%',
-    height: 48,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  modalButtonText: {
-    fontSize: 15,
     fontWeight: '700',
   },
 });

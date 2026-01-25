@@ -9,7 +9,7 @@ interface Props {
   onSelect: (id: string) => void;
 }
 
-export const LibraryExerciseList: React.FC<Props> = ({ data, selectedId, onSelect }) => {
+export const ExerciseList: React.FC<Props> = ({ data, selectedId, onSelect }) => {
   const renderExerciseItem = useCallback(
     ({ item }: { item: Exercise }) => (
       <ERTab.Item value={String(item.id)} title={item.name} imageSrc={item.image ?? undefined} />

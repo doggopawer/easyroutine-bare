@@ -1,31 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
 import { Routine, RoutineExercise, Set, RoutineHistory, Exercise } from '@/types/model';
-import { Category } from '@/types/common';
-import { ERBottomSheetRef } from '@/components/ui/ERBottomSheet/ERBottomSheet';
 import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import { useRoutineHistoryCreateMutation } from '@/hooks/useRoutineHistoryCreateMutation';
 import Toast from 'react-native-toast-message';
-
-export type MetricType = 'weight' | 'rep' | 'exerciseSec' | 'restSec';
-export type InputKind = 'decimal' | 'integer' | 'duration';
-
-export const getInputKind = (type: MetricType): InputKind => {
-  if (type === 'weight') {
-    return 'decimal';
-  }
-  if (type === 'rep') {
-    return 'integer';
-  }
-  return 'duration';
-};
-
-type ActiveCell = {
-  routineExerciseId: string;
-  setId: string;
-  metric: MetricType;
-  value: string;
-};
+import { ActiveCell, MetricType } from '@/hooks/useSetUpdateBottomSheet';
 
 type DoneMap = Record<string, Record<string, boolean>>;
 
@@ -73,10 +52,6 @@ export const useRoutineProgressScreen = (
   /* -------------------------------------------------------------------------- */
 
   const [routine, setRoutine] = useState<Routine>(initialRoutine);
-  const [category, setCategory] = useState<Category>(Category.ALL);
-  const [search, setSearch] = useState<string>('');
-  const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
-  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
 
   const [activeSet, setActiveSet] = useState<{
     routineExerciseId: string;
@@ -117,13 +92,6 @@ export const useRoutineProgressScreen = (
   const [routineFinishWarningOpen, setRoutineFinishWarningOpen] = useState<boolean>(false);
 
   /* -------------------------------------------------------------------------- */
-  /* ✅ Refs                                                                    */
-  /* -------------------------------------------------------------------------- */
-
-  const libraryRef = useRef<ERBottomSheetRef>(null);
-  const keypadRef = useRef<ERBottomSheetRef>(null);
-
-  /* -------------------------------------------------------------------------- */
   /* ✅ Effects                                                                 */
   /* -------------------------------------------------------------------------- */
 
@@ -147,13 +115,6 @@ export const useRoutineProgressScreen = (
   /* -------------------------------------------------------------------------- */
   /* ✅ Computed                                                                */
   /* -------------------------------------------------------------------------- */
-
-  const inputKind = useMemo<InputKind | null>(() => {
-    if (!activeCell) {
-      return null;
-    }
-    return getInputKind(activeCell.metric);
-  }, [activeCell]);
 
   const totalSetCount = useMemo(
     () => routine.routineExercises.reduce((acc, re) => acc + re.sets.length, 0),
@@ -237,23 +198,40 @@ export const useRoutineProgressScreen = (
   /* ✅ Handlers                                                                */
   /* -------------------------------------------------------------------------- */
 
-  const openLibrary = useCallback(() => {
-    libraryRef.current?.open();
-  }, []);
+  const handleUpdateRoutineSetValue = useCallback(
+    (cell: ActiveCell, next: string) => {
+      setRoutine(prev => {
+        const nextRoutineExercises = prev.routineExercises.map(re => {
+          if (String(re.id) !== cell.routineExerciseId) {
+            return re;
+          }
 
-  const closeLibrary = useCallback(() => {
-    libraryRef.current?.close();
-  }, []);
+          const nextSets = re.sets.map(s => {
+            if (String(s.id) !== cell.setId) {
+              return s;
+            }
 
-  const openKeypad = useCallback((cell: ActiveCell) => {
-    setActiveCell(cell);
-    keypadRef.current?.open();
-  }, []);
+            if (cell.metric === 'weight') {
+              return { ...s, weight: next };
+            }
+            if (cell.metric === 'rep') {
+              return { ...s, rep: next };
+            }
+            if (cell.metric === 'exerciseSec') {
+              return { ...s, exerciseSec: parseDurationToSec(next) };
+            }
 
-  const closeKeypad = useCallback(() => {
-    keypadRef.current?.close();
-    setActiveCell(null);
-  }, []);
+            return { ...s, restSec: parseDurationToSec(next) };
+          });
+
+          return { ...re, sets: nextSets };
+        });
+
+        return { ...prev, routineExercises: nextRoutineExercises };
+      });
+    },
+    []
+  );
 
   const moveNext = useCallback(() => {
     if (!activeSet) {
@@ -319,12 +297,6 @@ export const useRoutineProgressScreen = (
     moveNext();
   }, [moveNext]);
 
-  const handleRestFinish = useCallback(() => {
-    setRestRunning(false);
-    setRestTimerOpen(false);
-    setRestRemain(0);
-    moveNext();
-  }, [moveNext]);
 
   const handleSetDone = useCallback(() => {
     if (!activeSet) {
@@ -456,31 +428,31 @@ export const useRoutineProgressScreen = (
     [routine, activeSet]
   );
 
-  const handleAddExercisesToRoutine = useCallback(() => {
-    if (selectedExerciseIds.length === 0) {
-      return;
-    }
+  const handleAddExercisesToRoutine = useCallback(
+    (selectedExerciseIds: string[]) => {
+      if (selectedExerciseIds.length === 0) {
+        return;
+      }
 
-    const selectedExercises: Exercise[] = exerciseList.filter(ex =>
-      selectedExerciseIds.includes(String(ex.id))
-    );
+      const selectedExercises: Exercise[] = exerciseList.filter(ex =>
+        selectedExerciseIds.includes(String(ex.id))
+      );
 
-    setRoutine(prev => {
-      const nextOrderStart = prev.routineExercises.length + 1;
+      setRoutine(prev => {
+        const nextOrderStart = prev.routineExercises.length + 1;
 
-      const nextRoutineExercises: RoutineExercise[] = selectedExercises.map((exercise, idx) => ({
-        id: `routine-ex-${Date.now()}-${idx}`,
-        order: nextOrderStart + idx,
-        exercise,
-        sets: [createNewSet(1)],
-      }));
+        const nextRoutineExercises: RoutineExercise[] = selectedExercises.map((exercise, idx) => ({
+          id: `routine-ex-${Date.now()}-${idx}`,
+          order: nextOrderStart + idx,
+          exercise,
+          sets: [createNewSet(1)],
+        }));
 
-      return { ...prev, routineExercises: [...prev.routineExercises, ...nextRoutineExercises] };
-    });
-
-    setSelectedExerciseIds([]);
-    closeLibrary();
-  }, [selectedExerciseIds, exerciseList, closeLibrary]);
+        return { ...prev, routineExercises: [...prev.routineExercises, ...nextRoutineExercises] };
+      });
+    },
+    [exerciseList]
+  );
 
   const handleConfirmRoutineFinish = useCallback(async () => {
     try {
@@ -507,14 +479,6 @@ export const useRoutineProgressScreen = (
   return {
     // State
     routine,
-    setRoutine,
-    category,
-    setCategory,
-    search,
-    setSearch,
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    activeCell,
     activeSet,
     doneMap,
     restTimerOpen,
@@ -526,13 +490,6 @@ export const useRoutineProgressScreen = (
     routineFinishWarningOpen,
     setRoutineFinishWarningOpen,
     exerciseList,
-
-    // Refs
-    libraryRef,
-    keypadRef,
-
-    // Computed
-    inputKind,
     totalSetCount,
     doneSetCount,
     isAllDone,
@@ -542,16 +499,11 @@ export const useRoutineProgressScreen = (
     isDoneSet,
     getCellValue,
     formatDuration,
-    parseDurationToSec,
 
     // Handlers
-    openLibrary,
-    closeLibrary,
-    openKeypad,
-    closeKeypad,
+    handleUpdateRoutineSetValue,
     handleRestTempClose,
     handleRestSkip,
-    handleRestFinish,
     handleSetDone,
     handleAddSet,
     handleDeleteSet,

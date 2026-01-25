@@ -1,30 +1,9 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useExerciseListQuery } from '@/hooks/useExerciseListQuery';
 import { useRoutineCreateMutation } from '@/hooks/useRoutineCreateMuation';
 import { Routine, RoutineExercise, Set, Exercise } from '@/types/model';
-import { Category } from '@/types/common';
-import { ERBottomSheetRef } from '@/components/ui/ERBottomSheet/ERBottomSheet';
 import Toast from 'react-native-toast-message';
-
-export type MetricType = 'weight' | 'rep' | 'exerciseSec' | 'restSec';
-export type InputKind = 'decimal' | 'integer' | 'duration';
-
-export const getInputKind = (type: MetricType): InputKind => {
-  if (type === 'weight') {
-    return 'decimal';
-  }
-  if (type === 'rep') {
-    return 'integer';
-  }
-  return 'duration';
-};
-
-type ActiveCell = {
-  routineExerciseId: string;
-  setId: string;
-  metric: MetricType;
-  value: string;
-};
+import { ActiveCell, MetricType } from '@/hooks/useSetUpdateBottomSheet';
 
 export const useRoutineCreateScreen = (navigation: { goBack: () => void }) => {
   const { res } = useExerciseListQuery({});
@@ -43,31 +22,6 @@ export const useRoutineCreateScreen = (navigation: { goBack: () => void }) => {
     color: '#855CF8',
     routineExercises: [],
   });
-
-  const [exerciseDeleteModalOpen, setExerciseDeleteModalOpen] = useState<boolean>(false);
-  const [deleteTargetExerciseId, setDeleteTargetExerciseId] = useState<string | null>(null);
-  const [category, setCategory] = useState<Category>(Category.ALL);
-  const [search, setSearch] = useState<string>('');
-  const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
-  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
-
-  /* -------------------------------------------------------------------------- */
-  /* ✅ Refs                                                                    */
-  /* -------------------------------------------------------------------------- */
-
-  const keypadRef = useRef<ERBottomSheetRef>(null);
-  const libraryRef = useRef<ERBottomSheetRef>(null);
-
-  /* -------------------------------------------------------------------------- */
-  /* ✅ Computed                                                                */
-  /* -------------------------------------------------------------------------- */
-
-  const inputKind = useMemo<InputKind | null>(() => {
-    if (!activeCell) {
-      return null;
-    }
-    return getInputKind(activeCell.metric);
-  }, [activeCell]);
 
   const routineExercises = routine.routineExercises;
 
@@ -112,49 +66,27 @@ export const useRoutineCreateScreen = (navigation: { goBack: () => void }) => {
   /* ✅ Handlers                                                                */
   /* -------------------------------------------------------------------------- */
 
-  const openKeypad = useCallback((cell: ActiveCell) => {
-    setActiveCell(cell);
-    keypadRef.current?.open();
-  }, []);
-
-  const closeKeypad = useCallback(() => {
-    keypadRef.current?.close();
-    setActiveCell(null);
-  }, []);
-
-  const openLibrary = useCallback(() => {
-    libraryRef.current?.open();
-  }, []);
-
-  const closeLibrary = useCallback(() => {
-    libraryRef.current?.close();
-  }, []);
-
-  const handleKeyPadConfirm = useCallback(
-    (next: string) => {
-      if (!activeCell) {
-        return;
-      }
-
+  const handleUpdateRoutineSetValue = useCallback(
+    (cell: ActiveCell, next: string) => {
       setRoutine((prev: Routine) => {
         const nextRoutineExercises: RoutineExercise[] = prev.routineExercises.map(
           (re: RoutineExercise) => {
-            if (String(re.id) !== activeCell.routineExerciseId) {
+            if (String(re.id) !== cell.routineExerciseId) {
               return re;
             }
 
             const nextSets: Set[] = re.sets.map((s: Set) => {
-              if (String(s.id) !== activeCell.setId) {
+              if (String(s.id) !== cell.setId) {
                 return s;
               }
 
-              if (activeCell.metric === 'weight') {
+              if (cell.metric === 'weight') {
                 return { ...s, weight: next };
               }
-              if (activeCell.metric === 'rep') {
+              if (cell.metric === 'rep') {
                 return { ...s, rep: next };
               }
-              if (activeCell.metric === 'exerciseSec') {
+              if (cell.metric === 'exerciseSec') {
                 return { ...s, exerciseSec: parseDurationToSec(next) };
               }
 
@@ -170,64 +102,54 @@ export const useRoutineCreateScreen = (navigation: { goBack: () => void }) => {
           routineExercises: nextRoutineExercises,
         };
       });
-
-      closeKeypad();
     },
-    [activeCell, closeKeypad, parseDurationToSec]
+    [parseDurationToSec]
   );
 
-  const handleExerciseDeleteConfirm = useCallback(() => {
-    if (!deleteTargetExerciseId) {
-      return;
-    }
-
+  const handleExerciseDelete = useCallback((exerciseId: string) => {
     setRoutine(prev => ({
       ...prev,
-      routineExercises: prev.routineExercises.filter(
-        re => String(re.id) !== deleteTargetExerciseId
-      ),
+      routineExercises: prev.routineExercises.filter(re => String(re.id) !== exerciseId),
     }));
+  }, []);
 
-    setDeleteTargetExerciseId(null);
-  }, [deleteTargetExerciseId]);
+  const handleAddExercisesToRoutine = useCallback(
+    (selectedExerciseIds: string[]) => {
+      if (selectedExerciseIds.length === 0) {
+        return;
+      }
 
-  const handleAddExercisesToRoutine = useCallback(() => {
-    if (selectedExerciseIds.length === 0) {
-      return;
-    }
+      const selectedExercises = exerciseList.filter(ex =>
+        selectedExerciseIds.includes(String(ex.id))
+      );
 
-    const selectedExercises = exerciseList.filter(ex =>
-      selectedExerciseIds.includes(String(ex.id))
-    );
+      setRoutine(prev => {
+        const nextOrderStart = prev.routineExercises.length + 1;
 
-    setRoutine(prev => {
-      const nextOrderStart = prev.routineExercises.length + 1;
+        const nextRoutineExercises: RoutineExercise[] = selectedExercises.map((exercise, idx) => ({
+          id: `routine-ex-${Date.now()}-${idx}`,
+          order: nextOrderStart + idx,
+          exercise: exercise as Exercise,
+          sets: [
+            {
+              id: `set-${Date.now()}-${idx}-1`,
+              order: 1,
+              weight: 0,
+              rep: 0,
+              exerciseSec: 0,
+              restSec: 60,
+            },
+          ],
+        }));
 
-      const nextRoutineExercises: RoutineExercise[] = selectedExercises.map((exercise, idx) => ({
-        id: `routine-ex-${Date.now()}-${idx}`,
-        order: nextOrderStart + idx,
-        exercise: exercise as Exercise,
-        sets: [
-          {
-            id: `set-${Date.now()}-${idx}-1`,
-            order: 1,
-            weight: 0,
-            rep: 0,
-            exerciseSec: 0,
-            restSec: 60,
-          },
-        ],
-      }));
-
-      return {
-        ...prev,
-        routineExercises: [...prev.routineExercises, ...nextRoutineExercises],
-      };
-    });
-
-    setSelectedExerciseIds([]);
-    closeLibrary();
-  }, [selectedExerciseIds, exerciseList, closeLibrary]);
+        return {
+          ...prev,
+          routineExercises: [...prev.routineExercises, ...nextRoutineExercises],
+        };
+      });
+    },
+    [exerciseList]
+  );
 
   const handleCreateRoutine = useCallback(async () => {
     try {
@@ -255,33 +177,12 @@ export const useRoutineCreateScreen = (navigation: { goBack: () => void }) => {
     // State
     routine,
     exerciseList,
-    exerciseDeleteModalOpen,
-    setExerciseDeleteModalOpen,
-    setDeleteTargetExerciseId,
-    category,
-    setCategory,
-    search,
-    setSearch,
-    selectedExerciseIds,
-    setSelectedExerciseIds,
-    activeCell,
     routineExercises,
 
-    // Refs
-    keypadRef,
-    libraryRef,
-
-    // Computed
-    inputKind,
-
     // Handlers
-    openKeypad,
-    closeKeypad,
-    openLibrary,
-    closeLibrary,
     getCellValue,
-    handleKeyPadConfirm,
-    handleExerciseDeleteConfirm,
+    handleUpdateRoutineSetValue,
+    handleExerciseDelete,
     handleAddExercisesToRoutine,
     handleCreateRoutine,
   };

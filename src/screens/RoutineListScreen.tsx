@@ -1,20 +1,13 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
-import ERConfirmModal from '@/components/ui/ERConfirmModal/ERConfirmModal';
 import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
-import ERIconTitleSubTitle from '@/components/ui/ERIconTitleSubTitle/ERIconTitleSubTitle';
-import { Color } from '@/types/common';
-import { VStack } from '@/components/ui/VStack/VStack';
-import { HStack } from '@/components/ui/HStack/HStack';
-import ERImageTitleSubtitle from '@/components/ui/ERImageTitleSubTitle/ERImageTitleSubTitle';
-import ERIconTextButton from '@/components/ui/ERIconTextButton/ERIconTextButton';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
-import FireIcon from '@/assets/images/fire.svg';
-import ERSwipeableAccordion from '@/components/ui/ERSwipeableAccordion/ERSwipeableAccordion';
 import PageLayout from '@/components/ui/PageLayout/PageLayout';
 import { useRoutineListScreen } from '@/hooks/useRoutineListScreen';
+import { useRoutineDeleteModal } from '@/hooks/useRoutineDeleteModal';
+import RoutineDeleteModal from '@/components/domain/RoutineDeleteModal/RoutineDeleteModal';
+import RoutineListContent from '@/components/domain/RoutineList/RoutineListContent';
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineList'>;
 
@@ -22,14 +15,13 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
   const { theme } = useTheme();
 
   const {
-    routineDeleteModalOpen,
-    setRoutineDeleteModalOpen,
-    setDeleteTargetRoutineId,
     routineList,
-    handleCloseDeleteModal,
-    handleConfirmDelete,
-    handleDeletePress,
+    handleDeleteRoutine,
   } = useRoutineListScreen();
+
+  const { modalProps: routineDeleteModalProps, openDeleteModal } = useRoutineDeleteModal({
+    onConfirmDelete: handleDeleteRoutine,
+  });
 
   return (
     <PageLayout
@@ -37,20 +29,8 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
       activeTab="Home"
       overlay={({ scrollY }) => (
         <>
-          <ERConfirmModal
-            open={routineDeleteModalOpen}
-            onOpenChange={next => {
-              setRoutineDeleteModalOpen(next);
-              if (!next) {
-                setDeleteTargetRoutineId(null);
-              }
-            }}
-            title="루틴 삭제"
-            description="루틴을 삭제하시겠습니까?"
-            cancelText="취소"
-            confirmText="루틴 삭제"
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCloseDeleteModal}
+          <RoutineDeleteModal
+            {...routineDeleteModalProps}
             accentColor={theme.colors.red1}
           />
 
@@ -61,66 +41,21 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
         </>
       )}
       main={
-        <FlatList
-          data={routineList}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
-            <ERSwipeableAccordion
-              key={item.id}
-              onDeletePress={() => handleDeletePress(item.id.toString())}
-              visible={
-                <ERIconTitleSubTitle
-                  title={item.name}
-                  countText={item.routineExercises.length.toString()}
-                  color={item.color as Color}
-                />
-              }
-              hidden={
-                <VStack gap={12}>
-                  <FlatList
-                    data={item.routineExercises}
-                    keyExtractor={ex => ex.id.toString()}
-                    renderItem={({ item: ex }) => (
-                      <ERImageTitleSubtitle
-                        title={ex.exercise.name}
-                        subtitle={`${ex.sets.length} 세트`}
-                        imageSrc={ex.exercise.image ?? ''}
-                      />
-                    )}
-                    ItemSeparatorComponent={() => <View style={styles.spacer10} />}
-                    scrollEnabled={false}
-                  />
-
-                  <HStack justify="space-around">
-                    <ERIconTextButton
-                      color={theme.colors.primary1}
-                      icon={<FireIcon />}
-                      text="루틴 수정하기"
-                      onPress={() =>
-                        navigation.navigate('RoutineEdit', {
-                          routineId: item.id.toString(),
-                          routine: item,
-                        })
-                      }
-                    />
-
-                    <ERIconTextButton
-                      color={theme.colors.primary1}
-                      icon={<FireIcon />}
-                      text="루틴 시작하기"
-                      onPress={() =>
-                        navigation.navigate('RoutineProgress', {
-                          routineId: item.id.toString(),
-                          routine: item,
-                        })
-                      }
-                    />
-                  </HStack>
-                </VStack>
-              }
-            />
-          )}
-          ItemSeparatorComponent={() => <View style={styles.spacer10} />}
+        <RoutineListContent
+          routineList={routineList}
+          onDeletePress={openDeleteModal}
+          onEditPress={item =>
+            navigation.navigate('RoutineEdit', {
+              routineId: item.id.toString(),
+              routine: item,
+            })
+          }
+          onStartPress={item =>
+            navigation.navigate('RoutineProgress', {
+              routineId: item.id.toString(),
+              routine: item,
+            })
+          }
         />
       }
     />
@@ -128,9 +63,3 @@ const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 export default RoutineListScreen;
-
-const styles = StyleSheet.create({
-  spacer10: {
-    height: 10,
-  },
-});
