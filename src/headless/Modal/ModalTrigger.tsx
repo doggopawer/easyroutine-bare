@@ -15,13 +15,13 @@ const ModalTriggerBase: React.FC<ModalTriggerProps> = ({ children, onPress, ...p
   const store = useModalStoreContext();
   const openModal = useModalStore(store, s => s.openModal);
 
-  const handlePress = useCallback(() => {
+  const press = useCallback(() => {
     openModal();
     onPress?.();
   }, [openModal, onPress]);
 
   return (
-    <Pressable {...props} onPress={handlePress}>
+    <Pressable {...props} onPress={press}>
       {children}
     </Pressable>
   );

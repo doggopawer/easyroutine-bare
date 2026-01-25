@@ -11,7 +11,7 @@ import Toast from 'react-native-toast-message'; // ✅✅✅ 추가
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider/ThemeProvider';
 import AppNavigator from './src/navigation/AppNavigator';
-import ERToast from '@/components/ui/ERToast/ERToast';
+import ERToast from '@/components/common/ERToast/ERToast';
 
 // screens 최적화(앱 시작 1회)
 enableScreens();

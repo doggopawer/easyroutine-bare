@@ -25,7 +25,7 @@ const ManySelectItemBase: React.FC<ManySelectItemProps> = ({
   const selected = useManySelectStore(store, s => s.isSelected(value));
   const toggleValue = useManySelectStore(store, s => s.toggleValue);
 
-  const handlePress = useCallback(() => {
+  const press = useCallback(() => {
     toggleValue(value);
     onPress?.(value);
   }, [toggleValue, value, onPress]);
@@ -33,7 +33,7 @@ const ManySelectItemBase: React.FC<ManySelectItemProps> = ({
   return (
     <Pressable
       {...props}
-      onPress={handlePress}
+      onPress={press}
       accessibilityRole="checkbox"
       accessibilityState={{
         checked: selected,

@@ -26,11 +26,11 @@ const ModalContent: React.FC<ModalContentProps> = ({
   const open = useModalStore(store, s => s.open);
   const closeModal = useModalStore(store, s => s.closeModal);
 
-  const handleRequestClose = useCallback(() => {
+  const requestClose = useCallback(() => {
     closeModal();
   }, [closeModal]);
 
-  const handleBackdropPress = useCallback(() => {
+  const pressBackdrop = useCallback(() => {
     if (!closeOnBackdropPress) return;
     closeModal();
   }, [closeOnBackdropPress, closeModal]);
@@ -40,10 +40,10 @@ const ModalContent: React.FC<ModalContentProps> = ({
       transparent
       visible={open}
       animationType={animationType}
-      onRequestClose={handleRequestClose}
+      onRequestClose={requestClose}
     >
       {/* ✅ Backdrop */}
-      <Pressable style={styles.backdrop} onPress={handleBackdropPress}>
+      <Pressable style={styles.backdrop} onPress={pressBackdrop}>
         {/* ✅ Center Wrapper */}
         <View style={styles.center} pointerEvents="box-none">
           {/* ✅ Modal Content Container (사용자가 style로 디자인 주입 가능) */}

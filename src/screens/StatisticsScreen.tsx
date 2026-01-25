@@ -1,10 +1,10 @@
 import React from 'react';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
-import { useStatisticsScreen } from '@/hooks/useStatisticsScreen';
-import StatisticsContent from '@/components/domain/Statistics/StatisticsContent';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
+import { useStatisticsContent } from '@/hooks/feature/useStatisticsContent';
+import StatisticsContent from '@/components/feature/Statistics/StatisticsContent';
 
 const StatisticsScreen: React.FC = () => {
-  useStatisticsScreen();
+  useStatisticsContent();
 
   return (
     <PageLayout

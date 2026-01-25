@@ -15,13 +15,13 @@ const ModalCloseBase: React.FC<ModalCloseProps> = ({ children, onPress, ...props
   const store = useModalStoreContext();
   const closeModal = useModalStore(store, s => s.closeModal);
 
-  const handlePress = useCallback(() => {
+  const press = useCallback(() => {
     closeModal();
     onPress?.();
   }, [closeModal, onPress]);
 
   return (
-    <Pressable {...props} onPress={handlePress}>
+    <Pressable {...props} onPress={press}>
       {children}
     </Pressable>
   );

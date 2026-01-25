@@ -18,7 +18,7 @@ const SelectItemBase: React.FC<SelectItemProps> = ({ value, children, onPress, .
   const selected = useSelectStore(store, s => s.isSelected(value));
   const setValue = useSelectStore(store, s => s.setValue);
 
-  const handlePress = useCallback(() => {
+  const press = useCallback(() => {
     setValue(value);
     onPress?.(value);
   }, [setValue, value, onPress]);
@@ -26,7 +26,7 @@ const SelectItemBase: React.FC<SelectItemProps> = ({ value, children, onPress, .
   return (
     <Pressable
       {...props}
-      onPress={handlePress}
+      onPress={press}
       accessibilityRole="radio"
       accessibilityState={{
         selected,

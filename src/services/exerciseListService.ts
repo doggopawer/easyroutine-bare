@@ -1,7 +1,7 @@
 // src/features/inquire/list/logic/service.ts
 
 import { MESSAGE } from '@/constants/messages';
-import { Err, Ok, Result } from '@/hooks/useResultQuery';
+import { Err, Ok, Result } from '@/hooks/common/useResultQuery';
 import { ExerciseListReq, ExerciseListRes } from '@/types/exercise';
 import axiosInstance from '@/utils/axios';
 import { extractApiErrorMessage } from '@/utils/error';

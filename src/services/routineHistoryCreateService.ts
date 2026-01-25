@@ -1,5 +1,5 @@
 import { MESSAGE } from '@/constants/messages';
-import { Err, Ok, Result } from '@/hooks/useResultQuery';
+import { Err, Ok, Result } from '@/hooks/common/useResultQuery';
 import { RoutineHistoryCreateReq, RoutineHistoryCreateRes } from '@/types/routine-history';
 
 import axiosInstance from '@/utils/axios';

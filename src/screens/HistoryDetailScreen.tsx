@@ -1,10 +1,10 @@
 import React from 'react';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
-import { useHistoryDetailScreen } from '@/hooks/useHistoryDetailScreen';
-import HistoryDetailContent from '@/components/domain/HistoryDetail/HistoryDetailContent';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
+import { useHistoryDetailContent } from '@/hooks/feature/useHistoryDetailContent';
+import HistoryDetailContent from '@/components/feature/HistoryDetail/HistoryDetailContent';
 
 const HistoryDetailScreen: React.FC = () => {
-  const { recordId } = useHistoryDetailScreen();
+  const { recordId } = useHistoryDetailContent();
 
   return (
     <PageLayout

@@ -1,18 +1,17 @@
 import React from 'react';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
-import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
+import ERFloatingActionButton from '@/components/common/ERFloatingActionButton/ERFloatingActionButton';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
-import RoutineExerciseAccordionList from '@/components/domain/RoutineExerciseAccordionList/RoutineExerciseAccordionList';
-import ERButton from '@/components/ui/ERButton/ERButton';
-import { useRoutineEditScreen } from '@/hooks/useRoutineEditScreen';
-import { useRoutineExerciseDeleteModal } from '@/hooks/useRoutineExerciseDeleteModal';
-import RoutineExerciseDeleteModal from '@/components/domain/RoutineExerciseDeleteModal/RoutineExerciseDeleteModal';
-import SetUpdateBottomSheet from '@/components/domain/SetUpdateBottomSheet/SetUpdateBottomSheet';
-import { useSetUpdateBottomSheet } from '@/hooks/useSetUpdateBottomSheet';
-import RoutineExerciseAddBottomSheet from '@/components/domain/RoutineExerciseAddBottomSheet/RoutineExerciseAddBottomSheet';
-import { useRoutineExerciseAddBottomSheet } from '@/hooks/useRoutineExerciseAddBottomSheet';
+import { useRoutineEditModal } from '@/hooks/feature/useRoutineEditModal';
+import { useRoutineExerciseDeleteModal } from '@/hooks/feature/useRoutineExerciseDeleteModal';
+import RoutineExerciseDeleteModal from '@/components/feature/RoutineExerciseDeleteModal/RoutineExerciseDeleteModal';
+import SetUpdateBottomSheet from '@/components/feature/SetUpdateBottomSheet/SetUpdateBottomSheet';
+import { useSetUpdateBottomSheet } from '@/hooks/feature/useSetUpdateBottomSheet';
+import RoutineExerciseAddBottomSheet from '@/components/feature/RoutineExerciseAddBottomSheet/RoutineExerciseAddBottomSheet';
+import { useRoutineExerciseAddBottomSheet } from '@/hooks/feature/useRoutineExerciseAddBottomSheet';
+import RoutineEditModal from '@/components/feature/RoutineEditModal/RoutineEditModal';
 
 type Props = NativeStackScreenProps<RoutineStackParamList, 'RoutineEdit'>;
 
@@ -28,26 +27,26 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
 
     // Handlers
     getCellValue,
-    handleUpdateRoutineSetValue,
-    handleExerciseDelete,
-    handleAddExercisesToRoutine,
-    handleCreateRoutine,
-  } = useRoutineEditScreen(initialRoutine, navigation);
+    updateRoutineSetValue,
+    deleteExercise,
+    addExercisesToRoutine,
+    createRoutine,
+  } = useRoutineEditModal(initialRoutine, navigation);
 
   const { modalProps: exerciseDeleteModalProps, openDeleteModal } = useRoutineExerciseDeleteModal({
-    onConfirmDelete: handleExerciseDelete,
+    onConfirmDelete: deleteExercise,
   });
 
   const { activeCell, openSetUpdateBottomSheet, bottomSheetProps: setUpdateBottomSheetProps } =
     useSetUpdateBottomSheet({
-      onConfirmUpdate: handleUpdateRoutineSetValue,
+      onConfirmUpdate: updateRoutineSetValue,
     });
 
   const {
     openRoutineExerciseAddBottomSheet,
     bottomSheetProps: routineExerciseAddBottomSheetProps,
   } = useRoutineExerciseAddBottomSheet({
-    onConfirmAdd: handleAddExercisesToRoutine,
+    onConfirmAdd: addExercisesToRoutine,
   });
 
   return (
@@ -76,18 +75,14 @@ const RoutineEditScreen: React.FC<Props> = ({ navigation, route }) => {
         </>
       )}
       main={
-        <>
-          <RoutineExerciseAccordionList
-            routineExercises={routineExercises}
-            activeCell={activeCell}
-            getCellValue={getCellValue}
-            onOpenCell={openSetUpdateBottomSheet}
-            onDeleteExercise={openDeleteModal}
-          />
-          <ERButton variant="solid" onPress={handleCreateRoutine}>
-            루틴 저장
-          </ERButton>
-        </>
+        <RoutineEditModal
+          routineExercises={routineExercises}
+          activeCell={activeCell}
+          getCellValue={getCellValue}
+          onOpenCell={openSetUpdateBottomSheet}
+          onDeleteExercise={openDeleteModal}
+          onSubmit={createRoutine}
+        />
       }
     />
   );

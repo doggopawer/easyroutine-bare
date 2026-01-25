@@ -1,5 +1,5 @@
 import { MESSAGE } from '@/constants/messages';
-import { Err, Ok, Result } from '@/hooks/useResultQuery';
+import { Err, Ok, Result } from '@/hooks/common/useResultQuery';
 import { RoutineDeleteReq, RoutineDeleteRes } from '@/types/routine';
 import axiosInstance from '@/utils/axios';
 import { extractApiErrorMessage } from '@/utils/error';

@@ -1,17 +1,17 @@
 import React from 'react';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
-import { useLoginScreen } from '@/hooks/useLoginScreen';
-import LoginContent from '@/components/domain/Login/LoginContent';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
+import { useLoginContent } from '@/hooks/feature/useLoginContent';
+import LoginContent from '@/components/feature/Login/LoginContent';
 
 const LoginScreen: React.FC = () => {
-  const { handleLogin } = useLoginScreen();
+  const { login } = useLoginContent();
 
   return (
     <PageLayout
       mode="stack"
       title="Login"
       showHeader={false}
-      main={<LoginContent onLogin={handleLogin} />}
+      main={<LoginContent onLogin={login} />}
     />
   );
 };

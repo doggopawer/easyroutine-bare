@@ -6,6 +6,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "src/components/ERInput"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "src/components/common/ERInput"],
   "exclude": ["**/node_modules", "**/Pods"]
 }

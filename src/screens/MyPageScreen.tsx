@@ -1,10 +1,10 @@
 import React from 'react';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
-import { useMyPageScreen } from '@/hooks/useMyPageScreen';
-import MyPageContent from '@/components/domain/MyPage/MyPageContent';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
+import { useMyPageContent } from '@/hooks/feature/useMyPageContent';
+import MyPageContent from '@/components/feature/MyPage/MyPageContent';
 
 const MyPageScreen: React.FC = () => {
-  const { handleToggleClick, handleCircleButtonClick, handleTabItemPress } = useMyPageScreen();
+  const { toggle, pressCircleButton, pressTabItem } = useMyPageContent();
 
   return (
     <PageLayout
@@ -16,9 +16,9 @@ const MyPageScreen: React.FC = () => {
       )}
       main={
         <MyPageContent
-          onToggleClick={handleToggleClick}
-          onCircleButtonClick={handleCircleButtonClick}
-          onTabItemPress={handleTabItemPress}
+          onToggleClick={toggle}
+          onCircleButtonClick={pressCircleButton}
+          onTabItemPress={pressTabItem}
         />
       }
     />

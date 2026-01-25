@@ -1,25 +1,25 @@
 import React, { useCallback } from 'react';
 import { FlatList, View, Pressable, Text, StyleSheet } from 'react-native';
-import PageLayout from '@/components/ui/PageLayout/PageLayout';
+import PageLayout from '@/components/common/PageLayout/PageLayout';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RoutineStackParamList } from '@/navigation/types';
 import { RoutineExercise, Set } from '@/types/model';
-import { VStack } from '@/components/ui/VStack/VStack';
-import { HStack } from '@/components/ui/HStack/HStack';
+import { VStack } from '@/components/common/VStack/VStack';
+import { HStack } from '@/components/common/HStack/HStack';
 import { useTheme } from '@/theme/ThemeProvider/ThemeProvider';
-import ERSwipeableAccordion from '@/components/ui/ERSwipeableAccordion/ERSwipeableAccordion';
-import ERImageTitleSubtitle from '@/components/ui/ERImageTitleSubTitle/ERImageTitleSubTitle';
-import ERTable from '@/components/ui/ERTable/ERTable';
-import ERFloatingActionButton from '@/components/ui/ERFloatingActionButton/ERFloatingActionButton';
-import ERButton from '@/components/ui/ERButton/ERButton';
-import { useRoutineProgressScreen } from '@/hooks/useRoutineProgressScreen';
-import SetUpdateBottomSheet from '@/components/domain/SetUpdateBottomSheet/SetUpdateBottomSheet';
-import { useSetUpdateBottomSheet } from '@/hooks/useSetUpdateBottomSheet';
-import RoutineExerciseAddBottomSheet from '@/components/domain/RoutineExerciseAddBottomSheet/RoutineExerciseAddBottomSheet';
-import { useRoutineExerciseAddBottomSheet } from '@/hooks/useRoutineExerciseAddBottomSheet';
-import RoutineRestTimerModal from '@/components/domain/RoutineRestTimerModal/RoutineRestTimerModal';
-import RoutineFinishConfirmModal from '@/components/domain/RoutineFinishConfirmModal/RoutineFinishConfirmModal';
-import RoutineFinishWarningModal from '@/components/domain/RoutineFinishWarningModal/RoutineFinishWarningModal';
+import ERSwipeableAccordion from '@/components/common/ERSwipeableAccordion/ERSwipeableAccordion';
+import ERImageTitleSubtitle from '@/components/common/ERImageTitleSubTitle/ERImageTitleSubTitle';
+import ERTable from '@/components/common/ERTable/ERTable';
+import ERFloatingActionButton from '@/components/common/ERFloatingActionButton/ERFloatingActionButton';
+import ERButton from '@/components/common/ERButton/ERButton';
+import { useRoutineProgressModal } from '@/hooks/feature/useRoutineProgressModal';
+import SetUpdateBottomSheet from '@/components/feature/SetUpdateBottomSheet/SetUpdateBottomSheet';
+import { useSetUpdateBottomSheet } from '@/hooks/feature/useSetUpdateBottomSheet';
+import RoutineExerciseAddBottomSheet from '@/components/feature/RoutineExerciseAddBottomSheet/RoutineExerciseAddBottomSheet';
+import { useRoutineExerciseAddBottomSheet } from '@/hooks/feature/useRoutineExerciseAddBottomSheet';
+import RoutineRestTimerModal from '@/components/feature/RoutineRestTimerModal/RoutineRestTimerModal';
+import RoutineFinishConfirmModal from '@/components/feature/RoutineFinishConfirmModal/RoutineFinishConfirmModal';
+import RoutineFinishWarningModal from '@/components/feature/RoutineFinishWarningModal/RoutineFinishWarningModal';
 
 /* -------------------------------------------------------------------------- */
 /* ✅ 타입 정의                                                                */
@@ -56,26 +56,26 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
     formatDuration,
 
     // Handlers
-    handleUpdateRoutineSetValue,
-    handleRestTempClose,
-    handleRestSkip,
-    handleSetDone,
-    handleAddSet,
-    handleDeleteSet,
-    handleAddExercisesToRoutine,
-    handleConfirmRoutineFinish,
-  } = useRoutineProgressScreen(initialRoutine, navigation);
+    updateRoutineSetValue,
+    closeRestTimerTemp,
+    skipRest,
+    completeSet,
+    addSet,
+    deleteSet,
+    addExercisesToRoutine,
+    confirmRoutineFinish,
+  } = useRoutineProgressModal(initialRoutine, navigation);
 
   const { activeCell, openSetUpdateBottomSheet, bottomSheetProps: setUpdateBottomSheetProps } =
     useSetUpdateBottomSheet({
-      onConfirmUpdate: handleUpdateRoutineSetValue,
+      onConfirmUpdate: updateRoutineSetValue,
     });
 
   const {
     openRoutineExerciseAddBottomSheet,
     bottomSheetProps: routineExerciseAddBottomSheetProps,
   } = useRoutineExerciseAddBottomSheet({
-    onConfirmAdd: handleAddExercisesToRoutine,
+    onConfirmAdd: addExercisesToRoutine,
   });
 
   const renderRoutineExercise = useCallback(
@@ -236,7 +236,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
 
               <HStack justify="space-between" align="center">
                 <Pressable
-                  onPress={() => handleDeleteSet(routineExerciseId)}
+                  onPress={() => deleteSet(routineExerciseId)}
                   style={({ pressed }) => [styles.subButton, pressed && { opacity: 0.85 }]}
                 >
                   <Text style={[styles.subButtonText, { color: theme.colors.textMuted }]}>
@@ -245,7 +245,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
                 </Pressable>
 
                 <Pressable
-                  onPress={() => handleAddSet(routineExerciseId)}
+                  onPress={() => addSet(routineExerciseId)}
                   style={({ pressed }) => [styles.subButton, pressed && { opacity: 0.85 }]}
                 >
                   <Text style={[styles.subButtonText, { color: theme.colors.primary1 }]}>
@@ -259,7 +259,7 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
               <ERButton
                 variant="solid"
                 disabled={!isCurrentExercise || restRunning}
-                onPress={handleSetDone}
+                onPress={completeSet}
               >
                 세트 완료
               </ERButton>
@@ -271,10 +271,10 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
     [
       activeSet,
       doneMap,
-      handleSetDone,
+      completeSet,
       theme,
-      handleAddSet,
-      handleDeleteSet,
+      addSet,
+      deleteSet,
       activeCell,
       getCellValue,
       openSetUpdateBottomSheet,
@@ -293,8 +293,8 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
           <RoutineRestTimerModal
             open={restTimerOpen}
             remain={restRemain}
-            onCloseTemp={handleRestTempClose}
-            onSkip={handleRestSkip}
+            onCloseTemp={closeRestTimerTemp}
+            onSkip={skipRest}
             formatDuration={formatDuration}
           />
 
@@ -313,14 +313,14 @@ const RoutineProgressScreen: React.FC<Props> = ({ navigation, route }) => {
           <RoutineFinishConfirmModal
             open={routineFinishConfirmOpen}
             onOpenChange={setRoutineFinishConfirmOpen}
-            onConfirm={handleConfirmRoutineFinish}
+            onConfirm={confirmRoutineFinish}
             accentColor={theme.colors.primary1}
           />
 
           <RoutineFinishWarningModal
             open={routineFinishWarningOpen}
             onOpenChange={setRoutineFinishWarningOpen}
-            onConfirm={handleConfirmRoutineFinish}
+            onConfirm={confirmRoutineFinish}
             accentColor={theme.colors.red1}
           />
         </>

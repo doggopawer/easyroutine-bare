@@ -18,7 +18,7 @@ const AccordionTriggerBase: React.FC<AccordionTriggerProps> = ({ children, onPre
 
   const toggle = useAccordionStore(store, s => s.toggle);
 
-  const handlePress: PressableProps['onPress'] = useCallback(
+  const press: PressableProps['onPress'] = useCallback(
     (e: GestureResponderEvent) => {
       toggle();
       onPress?.(e);
@@ -27,7 +27,7 @@ const AccordionTriggerBase: React.FC<AccordionTriggerProps> = ({ children, onPre
   );
 
   return (
-    <Pressable {...props} onPress={handlePress}>
+    <Pressable {...props} onPress={press}>
       {children}
     </Pressable>
   );
