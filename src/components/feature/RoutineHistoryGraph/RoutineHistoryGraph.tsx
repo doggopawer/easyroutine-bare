@@ -2,15 +2,17 @@ import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import LineTab from '@/components/common/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
-import ERGraph from '@/components/common/ERGraph/ERGraph';
+import ERGraph, { ERGraphPoint } from '@/components/common/ERGraph/ERGraph';
 
-type CalendarContentProps = {
+type RoutineHistoryGraphProps = {
+  graphData: ERGraphPoint[];
   highlightIndex: number;
   onHighlightChange: (index: number) => void;
   onNavigateToDetail: () => void;
 };
 
-const CalendarContent: React.FC<CalendarContentProps> = ({
+const RoutineHistoryGraph: React.FC<RoutineHistoryGraphProps> = ({
+  graphData,
   highlightIndex,
   onHighlightChange,
   onNavigateToDetail,
@@ -20,17 +22,10 @@ const CalendarContent: React.FC<CalendarContentProps> = ({
       <LineTab routes={historyTabRoutes} activeTab="Calendar" />
 
       <View style={styles.container}>
-        <Text style={styles.text}>Calendar Screen</Text>
+        <Text style={styles.text}>Routine History</Text>
         <Button title="View Record Detail" onPress={onNavigateToDetail} />
         <ERGraph
-          data={[
-            { xLabel: '4월 30일', value: 20 },
-            { xLabel: '5월 1일', value: 60 },
-            { xLabel: '5월 2일', value: 30 },
-            { xLabel: '5월 3일', value: 80 },
-            { xLabel: '5월 4일', value: 55 },
-            { xLabel: '5월 5일', value: 95 },
-          ]}
+          data={graphData}
           onHighlightChange={onHighlightChange}
           highlightIndex={highlightIndex}
         />
@@ -39,8 +34,8 @@ const CalendarContent: React.FC<CalendarContentProps> = ({
   );
 };
 
-export default CalendarContent;
-export type { CalendarContentProps };
+export default RoutineHistoryGraph;
+export type { RoutineHistoryGraphProps };
 
 const styles = StyleSheet.create({
   container: {
