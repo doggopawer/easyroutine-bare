@@ -1,7 +1,7 @@
 import React from 'react';
 import PageLayout from '@/components/common/PageLayout/PageLayout';
-import { useRoutineHistoryGraph } from '@/hooks/feature/useRoutineHistoryGraph';
-import RoutineHistoryGraph from '@/components/feature/RoutineHistoryGraph/RoutineHistoryGraph';
+import { useRoutineHistoryExerciseDailySummaryListFetchGraph } from '@/hooks/feature/useRoutineHistoryExerciseDailySummaryListFetchGraph';
+import RoutineHistoryExerciseDailySummaryListFetchGraph from '@/components/feature/RoutineHistoryExerciseDailySummaryListFetchGraph/RoutineHistoryExerciseDailySummaryListFetchGraph';
 import ERButton from '@/components/common/ERButton/ERButton';
 import { useRoutineExerciseSelectBottomSheet } from '@/hooks/feature/useRoutineExerciseSelectBottomSheet';
 import RoutineExerciseSelectBottomSheet from '@/components/feature/RoutineExerciseSelectBottomSheet/RoutineExerciseSelectBottomSheet';
@@ -18,7 +18,7 @@ const CalendarScreen: React.FC = () => {
     setHighlightIndex,
     routineHistoryVolumeSeries,
     navigateToDetail,
-  } = useRoutineHistoryGraph(selectedExerciseId);
+  } = useRoutineHistoryExerciseDailySummaryListFetchGraph(selectedExerciseId);
 
   return (
     <PageLayout
@@ -30,7 +30,7 @@ const CalendarScreen: React.FC = () => {
       )}
       main={
         <>
-          <RoutineHistoryGraph
+          <RoutineHistoryExerciseDailySummaryListFetchGraph
             graphData={routineHistoryVolumeSeries}
             highlightIndex={highlightIndex}
             onHighlightChange={setHighlightIndex}

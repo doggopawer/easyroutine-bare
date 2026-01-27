@@ -4,14 +4,16 @@ import LineTab from '@/components/common/LineTab/LineTab';
 import { historyTabRoutes } from '@/navigation/routeConfig';
 import ERGraph, { ERGraphPoint } from '@/components/common/ERGraph/ERGraph';
 
-type RoutineHistoryGraphProps = {
+type RoutineHistoryExerciseDailySummaryListFetchGraphProps = {
   graphData: ERGraphPoint[];
   highlightIndex: number;
   onHighlightChange: (index: number) => void;
   onNavigateToDetail: () => void;
 };
 
-const RoutineHistoryGraph: React.FC<RoutineHistoryGraphProps> = ({
+const RoutineHistoryExerciseDailySummaryListFetchGraph: React.FC<
+  RoutineHistoryExerciseDailySummaryListFetchGraphProps
+> = ({
   graphData,
   highlightIndex,
   onHighlightChange,
@@ -34,8 +36,8 @@ const RoutineHistoryGraph: React.FC<RoutineHistoryGraphProps> = ({
   );
 };
 
-export default RoutineHistoryGraph;
-export type { RoutineHistoryGraphProps };
+export default RoutineHistoryExerciseDailySummaryListFetchGraph;
+export type { RoutineHistoryExerciseDailySummaryListFetchGraphProps };
 
 const styles = StyleSheet.create({
   container: {
